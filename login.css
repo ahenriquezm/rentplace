@@ -1,0 +1,42 @@
+/* login.css — estilos del módulo de login / registro */
+
+:root{
+  --lg-bg:#FAFAF9;
+  --lg-ink:#23272E;
+  --lg-primary:#4A7182;
+  --lg-primary-dark:#395A69;
+  --lg-muted:#6B7280;
+  --lg-muted-2:#8A909C;
+  --lg-line:#E3E7EA;
+}
+
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--lg-bg); color:var(--lg-ink); font-family:'Manrope', sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; }
+.d-none{ display:none !important; }
+
+.lg-header{ padding:26px 32px; }
+.lg-brand{ display:inline-flex; align-items:center; gap:9px; text-decoration:none; color:var(--lg-ink); }
+.lg-brand span{ font-family:'Sora', sans-serif; font-size:20px; font-weight:800; }
+
+.lg-wrap{ display:flex; justify-content:center; padding:40px 20px 80px; }
+.lg-card{ width:100%; max-width:420px; background:#fff; border:1px solid var(--lg-line); border-radius:22px; padding:34px 32px; box-shadow:0 20px 50px -30px rgba(35,39,46,0.25); }
+
+.lg-tabs{ display:flex; background:#F1F2F0; border-radius:12px; padding:4px; margin-bottom:26px; }
+.lg-tab{ flex:1; border:none; background:transparent; padding:10px; border-radius:9px; font-size:14px; font-weight:700; color:var(--lg-muted); cursor:pointer; font-family:'Manrope'; }
+.lg-tab.active{ background:#fff; color:var(--lg-ink); box-shadow:0 2px 6px rgba(35,39,46,0.08); }
+
+.lg-form{ display:flex; flex-direction:column; }
+.lg-field{ margin-bottom:16px; }
+.lg-field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.lg-label{ display:block; font-size:12.5px; font-weight:700; color:var(--lg-muted); margin-bottom:6px; }
+.lg-input{ width:100%; padding:13px 14px; border:1px solid var(--lg-line); border-radius:11px; font-size:14.5px; font-family:'Manrope'; background:#fff; }
+.lg-input:focus{ outline:none; border-color:var(--lg-primary); }
+.lg-hint{ font-size:12px; color:var(--lg-muted-2); margin-top:5px; }
+
+.lg-msg{ font-size:13px; font-weight:600; padding:11px 13px; border-radius:11px; margin-bottom:16px; }
+.lg-msg.ok{ background:#EAF1F3; color:var(--lg-primary-dark); }
+.lg-msg.error{ background:#FBEAEA; color:#B23B3B; }
+
+.lg-btn{ width:100%; background:var(--lg-primary); color:#fff; border:none; padding:14px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Manrope'; margin-top:4px; }
+.lg-btn:hover:not(:disabled){ background:var(--lg-primary-dark); }
+.lg-btn:disabled{ opacity:0.6; cursor:not-allowed; }

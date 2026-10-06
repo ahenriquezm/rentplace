@@ -1,0 +1,75 @@
+/* publicar_propiedad.css — estilos del módulo de publicación de propiedades */
+
+:root{
+  --od-bg:#FFFFFF;
+  --od-ink:#23272E;
+  --od-pine:#4A7182;
+  --od-pine-dark:#395A69;
+  --od-gold:#C98A5C;
+  --od-muted:#6B7280;
+  --od-muted-2:#8A909C;
+  --od-line:#E3E7EA;
+  --od-radius:16px;
+}
+
+*{ box-sizing:border-box; }
+body{ margin:0; background:#FAFAF9; color:var(--od-ink); font-family:'Manrope', sans-serif; -webkit-font-smoothing:antialiased; }
+.container{ max-width:1280px; margin:0 auto; padding:0 32px; }
+.d-flex{ display:flex; } .align-items-center{ align-items:center; } .justify-content-between{ justify-content:space-between; }
+.gap-2{ gap:8px; }
+.py-3{ padding-top:16px; padding-bottom:16px; }
+.d-none{ display:none !important; }
+
+.od-header{ border-bottom:1px solid var(--od-line); background:#fff; }
+.od-brand-name{ font-family:'Sora', sans-serif; font-size:21px; font-weight:800; color:var(--od-ink); }
+.od-muted{ color:var(--od-muted-2); font-size:14px; }
+a{ color:inherit; text-decoration:none; }
+
+.pp-wrap{ max-width:720px; padding-bottom:100px; }
+.pp-intro{ padding:44px 0 8px; }
+.pp-title{ font-family:'Sora', sans-serif; font-size:30px; font-weight:800; margin:0 0 10px; }
+.pp-sub{ font-size:15px; color:var(--od-muted); line-height:1.55; margin:0; }
+
+.pp-section{ background:#fff; border:1px solid var(--od-line); border-radius:20px; padding:28px; margin-top:24px; }
+.pp-section-title{ font-family:'Sora', sans-serif; font-size:18px; font-weight:700; margin:0 0 20px; }
+
+.pp-field{ margin-bottom:18px; }
+.pp-field:last-child{ margin-bottom:0; }
+.pp-field-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.pp-field-row-3{ grid-template-columns:1fr 1fr 1fr; }
+
+.pp-label{ display:block; font-size:12.5px; font-weight:700; color:var(--od-muted); margin-bottom:6px; }
+.pp-input{ width:100%; padding:13px 14px; border:1px solid var(--od-line); border-radius:11px; font-size:14.5px; font-family:'Manrope'; background:#fff; }
+.pp-input:focus{ outline:none; border-color:var(--od-pine); }
+.pp-textarea{ min-height:110px; resize:vertical; }
+
+.pp-transparency-note{ display:flex; gap:9px; align-items:flex-start; background:#EAF1F3; border-radius:14px; padding:13px 15px; font-size:12.5px; color:var(--od-pine-dark); margin-top:18px; line-height:1.5; font-weight:600; }
+
+.pp-hint{ font-size:13px; color:var(--od-muted-2); margin:0 0 16px; }
+
+.pp-amenity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.pp-amenity-chip{ display:flex; align-items:center; gap:8px; border:1px solid var(--od-line); border-radius:12px; padding:11px 14px; font-size:14px; cursor:pointer; }
+.pp-amenity-chip:has(input:checked){ border-color:var(--od-pine); background:#EAF1F3; }
+.pp-amenity-chip input{ accent-color:var(--od-pine); }
+
+.pp-dropzone{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; border:2px dashed var(--od-line); border-radius:16px; padding:34px; cursor:pointer; color:var(--od-muted); font-size:14px; font-weight:600; }
+.pp-dropzone:hover{ border-color:var(--od-pine); color:var(--od-pine); }
+.pp-dropzone-icon{ font-size:26px; }
+
+.pp-photo-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; margin-top:16px; }
+.pp-photo-item{ position:relative; aspect-ratio:1/1; border-radius:12px; overflow:hidden; }
+.pp-photo-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+.pp-photo-item .pp-cover-tag{ position:absolute; top:6px; left:6px; background:var(--od-pine); color:#fff; font-size:10px; font-weight:700; padding:3px 7px; border-radius:999px; }
+.pp-photo-item .pp-remove{ position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; background:rgba(35,39,46,0.55); color:#fff; border:none; cursor:pointer; font-size:13px; line-height:1; }
+
+.pp-msg{ font-size:14px; font-weight:600; padding:12px 15px; border-radius:12px; margin-top:22px; }
+.pp-msg.ok{ background:#EAF1F3; color:var(--od-pine-dark); }
+.pp-msg.error{ background:#FBEAEA; color:#B23B3B; }
+
+.pp-btn-submit{ width:100%; background:var(--od-pine); color:#fff; border:none; padding:16px; border-radius:14px; font-size:15.5px; font-weight:700; cursor:pointer; margin-top:24px; font-family:'Manrope'; }
+.pp-btn-submit:hover:not(:disabled){ background:var(--od-pine-dark); }
+.pp-btn-submit:disabled{ opacity:0.6; cursor:not-allowed; }
+
+@media (max-width:640px){
+  .pp-field-row, .pp-field-row-3, .pp-amenity-grid{ grid-template-columns:1fr; }
+}

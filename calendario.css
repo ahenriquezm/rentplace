@@ -1,0 +1,90 @@
+/* calendario.css — estilos del módulo de calendario y precios */
+
+:root{
+  --od-bg:#FFFFFF;
+  --od-ink:#23272E;
+  --od-pine:#4A7182;
+  --od-pine-dark:#395A69;
+  --od-gold:#C98A5C;
+  --od-muted:#6B7280;
+  --od-muted-2:#8A909C;
+  --od-line:#E3E7EA;
+}
+
+*{ box-sizing:border-box; }
+body{ margin:0; background:#FAFAF9; color:var(--od-ink); font-family:'Manrope', sans-serif; -webkit-font-smoothing:antialiased; padding-bottom:110px; }
+.container{ max-width:900px; margin:0 auto; padding:0 32px; }
+.d-flex{ display:flex; } .align-items-center{ align-items:center; } .justify-content-between{ justify-content:space-between; }
+.py-3{ padding-top:16px; padding-bottom:16px; }
+.d-none{ display:none !important; }
+a{ color:inherit; text-decoration:none; }
+* { -webkit-user-select:none; user-select:none; } /* evita seleccionar texto al arrastrar sobre el calendario */
+
+.od-header{ border-bottom:1px solid var(--od-line); background:#fff; }
+.od-back{ font-size:14px; font-weight:600; color:var(--od-muted); }
+.od-back:hover{ color:var(--od-pine); }
+.od-muted{ color:var(--od-muted-2); font-size:14px; }
+
+.cal-title{ font-family:'Sora', sans-serif; font-size:24px; font-weight:800; padding-top:32px; margin:0 0 8px; }
+.cal-sub{ font-size:14px; color:var(--od-muted); margin:0 0 20px; max-width:560px; line-height:1.5; }
+
+.cal-legend{ display:flex; flex-wrap:wrap; gap:18px; margin-bottom:24px; }
+.cal-legend-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--od-muted); }
+.cal-dot{ width:10px; height:10px; border-radius:3px; display:inline-block; }
+.cal-dot-disponible{ background:#fff; border:1.5px solid var(--od-line); }
+.cal-dot-personalizado{ background:#F6EDE4; border:1.5px solid var(--od-gold); }
+.cal-dot-bloqueado{ background:repeating-linear-gradient(135deg,#E3E7EA,#E3E7EA 3px,#F1F2F0 3px,#F1F2F0 6px); }
+.cal-dot-reservado{ background:var(--od-pine); }
+
+.cal-nav{ display:flex; align-items:center; justify-content:center; gap:24px; margin-bottom:16px; }
+.cal-nav-btn{ width:36px; height:36px; border-radius:50%; border:1px solid var(--od-line); background:#fff; font-size:16px; cursor:pointer; }
+.cal-nav-btn:hover{ border-color:var(--od-pine); color:var(--od-pine); }
+.cal-mes-actual{ font-family:'Sora'; font-size:17px; font-weight:700; min-width:180px; text-align:center; text-transform:capitalize; }
+
+.cal-dias-semana{ display:grid; grid-template-columns:repeat(7,1fr); gap:8px; font-size:12px; font-weight:700; color:var(--od-muted-2); text-align:center; padding:0 0 8px; }
+
+.cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:8px; }
+
+.cal-dia{
+  aspect-ratio:1/1; border-radius:12px; border:1.5px solid var(--od-line); background:#fff;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  cursor:pointer; position:relative; font-size:13px;
+}
+.cal-dia.vacio{ visibility:hidden; cursor:default; }
+.cal-dia.pasado{ opacity:0.35; cursor:not-allowed; }
+.cal-dia .num{ font-weight:700; }
+.cal-dia .precio{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--od-muted); }
+
+.cal-dia.personalizado{ background:#F6EDE4; border-color:var(--od-gold); }
+.cal-dia.personalizado .precio{ color:#A0721F; font-weight:600; }
+
+.cal-dia.bloqueado{ background:repeating-linear-gradient(135deg,#F7F6F3,#F7F6F3 6px,#EFEDE8 6px,#EFEDE8 12px); color:var(--od-muted-2); }
+.cal-dia.bloqueado .precio{ display:none; }
+
+.cal-dia.reservado{ background:var(--od-pine); color:#fff; cursor:not-allowed; }
+.cal-dia.reservado .precio{ color:#DCE8EA; }
+
+.cal-dia.seleccionado{ outline:2.5px solid var(--od-ink); outline-offset:-2.5px; }
+
+/* Barra de acciones flotante */
+.cal-barra-acciones{
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:#fff; border:1px solid var(--od-line); border-radius:16px;
+  box-shadow:0 20px 50px -20px rgba(35,39,46,0.3);
+  padding:14px 18px; display:flex; align-items:center; gap:18px; z-index:50;
+  max-width:calc(100% - 40px); flex-wrap:wrap;
+}
+.cal-barra-info{ font-size:13.5px; font-weight:700; white-space:nowrap; }
+.cal-barra-controles{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.cal-precio-input{ width:140px; padding:9px 12px; border:1px solid var(--od-line); border-radius:9px; font-size:13.5px; font-family:'Manrope'; }
+.cal-btn{ font-size:12.5px; font-weight:700; padding:9px 14px; border-radius:9px; cursor:pointer; border:1px solid var(--od-line); background:#fff; white-space:nowrap; }
+.cal-btn-primary{ background:var(--od-pine); border-color:var(--od-pine); color:#fff; }
+.cal-btn-primary:hover{ background:var(--od-pine-dark); }
+.cal-btn-outline:hover{ border-color:var(--od-ink); }
+.cal-btn-texto{ border:none; background:transparent; color:var(--od-muted); }
+.cal-btn-texto:hover{ color:var(--od-ink); }
+
+@media (max-width:560px){
+  .cal-dia .precio{ display:none; }
+  .cal-barra-acciones{ flex-direction:column; align-items:stretch; }
+}

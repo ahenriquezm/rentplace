@@ -1,0 +1,85 @@
+/* comingsoon.css — landing de pre-lanzamiento Rentplace */
+
+:root{
+  --cs-bg:#FFFFFF;
+  --cs-ink:#23272e;
+  --cs-pine:#4a7182;
+  --cs-pine-dark:#395a69;
+  --cs-gold:#c98a5c;
+  --cs-muted:#6B7280;
+  --cs-muted-2:#8A909C;
+  --cs-line:#e3e7ea;
+}
+
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--cs-bg); color:var(--cs-ink); font-family:'Manrope', sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+a{ color:inherit; text-decoration:none; }
+.d-none{ display:none !important; }
+
+/* Fondos decorativos, sutiles, dan sensación de producción cuidada sin pesar la carga */
+.cs-blob{ position:fixed; border-radius:50%; filter:blur(90px); opacity:0.35; z-index:0; pointer-events:none; }
+.cs-blob-1{ width:520px; height:520px; background:#CFE0D6; top:-180px; right:-160px; }
+.cs-blob-2{ width:420px; height:420px; background:#F3E3C9; bottom:-140px; left:-140px; }
+
+.cs-wrap{ position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 28px; }
+
+/* Header */
+.cs-header{ display:flex; align-items:center; justify-content:space-between; padding:32px 0; }
+.cs-brand{ display:flex; align-items:center; gap:9px; }
+.cs-brand-name{ font-family:'Sora', sans-serif; font-size:21px; font-weight:800; }
+.cs-social{ display:flex; gap:22px; font-size:14px; font-weight:600; color:var(--cs-muted); }
+.cs-social a:hover{ color:var(--cs-pine); }
+
+/* Hero */
+.cs-hero{ display:flex; flex-direction:column; align-items:center; text-align:center; padding:56px 0 40px; }
+
+.cs-eyebrow{
+  display:inline-block; background:#EAF1F3; color:var(--cs-pine-dark); font-size:13px; font-weight:700;
+  padding:8px 16px; border-radius:999px; margin-bottom:24px; letter-spacing:.02em;
+}
+
+.cs-title{ font-family:'Sora', sans-serif; font-size:48px; font-weight:800; line-height:1.12; letter-spacing:-0.02em; max-width:760px; margin:0 0 20px; }
+.cs-title span{ color:var(--cs-pine); }
+
+.cs-sub{ font-size:17px; color:var(--cs-muted); max-width:560px; line-height:1.6; margin:0 0 36px; }
+
+.cs-perfil-group{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:16px; }
+.cs-perfil-opt{ display:flex; align-items:center; gap:7px; border:1px solid var(--cs-line); border-radius:999px; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer; }
+.cs-perfil-opt input{ accent-color:var(--cs-pine); margin:0; }
+.cs-perfil-opt:has(input:checked){ border-color:var(--cs-pine); background:#EAF1F3; color:var(--cs-pine-dark); }
+
+.cs-form{ width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; margin-bottom:14px; }
+.cs-form-row{ width:100%; display:flex; gap:10px; }
+.cs-input{ flex:1; padding:16px 18px; border:1px solid var(--cs-line); border-radius:13px; font-size:15px; font-family:'Manrope'; background:#fff; }
+.cs-input:focus{ outline:none; border-color:var(--cs-pine); box-shadow:0 0 0 3px rgba(74,113,130,0.12); }
+.cs-btn{ background:var(--cs-pine); color:#fff; border:none; padding:16px 22px; border-radius:13px; font-size:14.5px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:'Manrope'; }
+.cs-btn:hover:not(:disabled){ background:var(--cs-pine-dark); }
+.cs-btn:disabled{ opacity:0.6; cursor:not-allowed; }
+
+.cs-msg{ font-size:14px; font-weight:600; padding:12px 16px; border-radius:12px; max-width:480px; margin-bottom:14px; }
+.cs-msg.ok{ background:#EAF1F3; color:var(--cs-pine-dark); }
+.cs-msg.error{ background:#FBEAEA; color:#B23B3B; }
+
+.cs-microcopy{ font-size:13px; color:var(--cs-muted-2); }
+
+.cs-counter{ margin-top:28px; font-size:13.5px; font-weight:600; color:var(--cs-muted); display:flex; align-items:center; gap:8px; }
+.cs-counter::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--cs-gold); display:inline-block; }
+#contador-numero{ color:var(--cs-ink); font-weight:800; }
+
+/* Features */
+.cs-features{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; padding:60px 0 70px; }
+.cs-feature{ background:#fff; border:1px solid var(--cs-line); border-radius:20px; padding:26px 24px; }
+.cs-feature-icon{ font-size:26px; margin-bottom:14px; }
+.cs-feature-t{ font-family:'Sora'; font-size:16.5px; font-weight:700; margin-bottom:8px; }
+.cs-feature-s{ font-size:14px; color:var(--cs-muted); line-height:1.55; }
+
+/* Footer */
+.cs-footer{ display:flex; align-items:center; justify-content:space-between; padding:28px 0 40px; border-top:1px solid var(--cs-line); font-size:13px; color:var(--cs-muted-2); }
+.cs-footer a:hover{ color:var(--cs-pine); }
+
+@media (max-width:720px){
+  .cs-title{ font-size:34px; }
+  .cs-form{ flex-direction:column; }
+  .cs-features{ grid-template-columns:1fr; }
+  .cs-footer{ flex-direction:column; gap:10px; text-align:center; }
+}

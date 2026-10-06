@@ -1,0 +1,71 @@
+/* ficha_propiedad.css — estilos del módulo, sobre Bootstrap 5 */
+
+:root{
+  --od-bg:#FFFFFF;
+  --od-ink:#23272e;
+  --od-pine:#4a7182;
+  --od-pine-dark:#395a69;
+  --od-gold:#c98a5c;
+  --od-muted:#6B7280;
+  --od-muted-2:#8A909C;
+  --od-line:#e3e7ea;
+  --od-radius:20px;
+}
+
+body{
+  background:var(--od-bg);
+  color:var(--od-ink);
+  font-family:'Manrope', sans-serif;
+}
+
+.od-header{ border-bottom:1px solid var(--od-line); }
+.od-brand-name{ font-family:'Sora', sans-serif; font-size:20px; font-weight:800; color:var(--od-ink); }
+.od-muted{ color:var(--od-muted-2); font-size:14px; }
+
+.od-btn{ display:inline-block; font-weight:700; font-size:14px; padding:10px 18px; border-radius:10px; text-decoration:none; border:none; cursor:pointer; }
+.od-btn-dark{ background:var(--od-ink); color:#fff; }
+.od-btn-dark:hover{ background:var(--od-pine); color:#fff; }
+.od-btn-primary{ background:var(--od-pine); color:#fff; padding:14px; font-size:15px; border-radius:13px; }
+.od-btn-primary:hover:not(:disabled){ background:var(--od-pine-dark); }
+.od-btn-primary:disabled{ opacity:0.55; cursor:not-allowed; }
+
+.od-back{ display:inline-flex; align-items:center; gap:6px; font-size:14px; color:var(--od-muted-2); margin:22px 0; text-decoration:none; }
+.od-back:hover{ color:var(--od-pine); }
+
+/* Galería */
+.od-gallery{ display:grid; grid-template-columns:1.4fr 1fr; gap:8px; border-radius:24px; overflow:hidden; height:410px; }
+.od-gallery-side{ display:grid; grid-template-rows:1fr 1fr; gap:8px; }
+.od-gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
+.od-skeleton{ width:100%; height:100%; background:linear-gradient(90deg,#F0EEE9 25%,#F7F6F3 37%,#F0EEE9 63%); background-size:400% 100%; animation:od-shimmer 1.4s ease infinite; border-radius:14px; }
+@keyframes od-shimmer{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+
+/* Cuerpo del detalle */
+.od-detail-body{ display:grid; grid-template-columns:1.6fr 1fr; gap:56px; margin-top:34px; padding-bottom:60px; }
+.od-title{ font-family:'Sora', sans-serif; font-weight:800; font-size:29px; margin-bottom:8px; }
+.od-h3{ font-family:'Sora', sans-serif; font-weight:700; font-size:19px; margin-bottom:15px; }
+.od-hr{ border:none; height:1px; background:var(--od-line); margin:26px 0; }
+
+.od-host-row{ display:flex; align-items:center; gap:14px; }
+.od-avatar{ width:52px; height:52px; border-radius:50%; object-fit:cover; }
+
+.od-amenity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:14.5px; }
+
+/* Tarjeta de reserva */
+.od-booking-card{ border:1px solid var(--od-line); border-radius:22px; padding:24px; position:sticky; top:24px; box-shadow:0 16px 36px rgba(35,39,46,0.08); background:#fff; height:fit-content; }
+.od-booking-price{ font-family:'Sora', sans-serif; font-size:22px; font-weight:800; margin-bottom:14px; }
+
+.od-label{ font-size:11px; font-weight:700; color:var(--od-muted-2); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:4px; }
+.od-input{ width:100%; padding:11px 13px; border:1px solid var(--od-line); border-radius:11px; font-size:14px; font-family:'Manrope'; background:#fff; }
+.od-input:focus{ outline:none; border-color:var(--od-pine); }
+
+.od-date-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+
+.od-price-breakdown{ margin:16px 0; }
+.od-cost-line{ display:flex; justify-content:space-between; font-size:14px; margin:9px 0; }
+.od-cost-line.od-total{ font-weight:700; padding-top:13px; border-top:1px solid var(--od-line); margin-top:13px; }
+
+.od-availability-msg{ font-size:13px; font-weight:600; padding:10px 12px; border-radius:10px; margin-bottom:14px; }
+.od-availability-msg.ok{ background:#EAF1F3; color:var(--od-pine-dark); }
+.od-availability-msg.error{ background:#FBEAEA; color:#B23B3B; }
+
+.od-transparency-note{ display:flex; gap:9px; align-items:flex-start; background:#EAF1F3; border-radius:14px; padding:13px 15px; font-size:12.5px; color:var(--od-pine-dark); margin:16px 0; line-height:1.5; font-weight:600; }

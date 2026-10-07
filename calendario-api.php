@@ -156,10 +156,13 @@ function accion_guardar(mysqli $conexion): void
         responder(true, null, 'Fechas restauradas al valor por defecto.');
     }
 
-    $disponible = isset($_POST['disponible']) ? (int) $_POST['disponible'] : 1;
+    $disponible = isset($_POST['disponible']) && (int) $_POST['disponible'] === 0 ? 0 : 1;
     $precio = isset($_POST['precio_personalizado']) && $_POST['precio_personalizado'] !== ''
         ? (float) $_POST['precio_personalizado']
         : null;
+    if ($precio !== null && $precio <= 0) {
+        responder(false, null, 'El precio personalizado debe ser mayor a 0.', 422);
+    }
 
     $stmt = $conexion->prepare(
         'INSERT INTO calendario_propiedad (id_propiedad, fecha, disponible, precio_personalizado)
@@ -206,4 +209,4 @@ function responder(bool $success, $data, string $message = '', int $http_code = 
         'message' => $message,
     ], JSON_UNESCAPED_UNICODE);
     exit;
-}
+}

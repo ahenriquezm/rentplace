@@ -15,7 +15,7 @@
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/conexion.php';
 
-$CARGO_SERVICIO = 0; // offday: siempre 0. El modelo de negocio se financia por suscripción del anfitrión, no por comisión al huésped.
+$CARGO_SERVICIO = 0; // Rentplace: siempre 0. El modelo de negocio se financia por suscripción del anfitrión, no por comisión al huésped.
 
 $action = $_REQUEST['action'] ?? '';
 
@@ -151,7 +151,9 @@ function accion_disponibilidad(mysqli $conexion): void
 
 function accion_crear_reserva(mysqli $conexion, float $cargo_servicio): void
 {
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
     if (empty($_SESSION['estado_sesion']) || $_SESSION['estado_sesion'] !== 'activa') {
         responder(false, null, 'Debes iniciar sesión para reservar.', 401);
@@ -231,6 +233,7 @@ function validar_fechas(int $id, string $llegada, string $salida): array
     if (!$llegada || !$salida) return [false, 'Debes indicar fecha de llegada y salida.'];
     if (!strtotime($llegada) || !strtotime($salida)) return [false, 'Fechas inválidas.'];
     if (strtotime($salida) <= strtotime($llegada)) return [false, 'La salida debe ser posterior a la llegada.'];
+    if (strtotime($llegada) < strtotime(date('Y-m-d'))) return [false, 'La llegada no puede ser en el pasado.'];
     return [true, ''];
 }
 
@@ -339,4 +342,4 @@ function responder(bool $success, $data, string $message = '', int $http_code = 
         'message' => $message,
     ], JSON_UNESCAPED_UNICODE);
     exit;
-}
+}

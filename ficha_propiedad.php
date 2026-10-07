@@ -12,7 +12,11 @@
  * Ajusta las rutas de include según la ubicación real de este archivo
  * dentro de tu estructura de carpetas (ej. /modules/ficha_propiedad/).
  */
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/control_lanzamiento.php'; // respeta el modo coming soon e inicia la sesión
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $id_propiedad = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
@@ -29,7 +33,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>offday — Detalle de propiedad</title>
+<title>Detalle de propiedad — Rentplace</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,14 +45,10 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
   <div class="container d-flex align-items-center justify-content-between py-3">
     <a href="index.php" class="od-brand d-flex align-items-center gap-2 text-decoration-none">
       <svg width="32" height="32" viewBox="0 0 34 34">
-        <ellipse cx="17" cy="18" rx="12" ry="10" fill="#4a7182"/>
-        <circle cx="17" cy="7" r="5" fill="#4a7182"/>
-        <circle cx="6" cy="14" r="4" fill="#c98a5c"/>
-        <circle cx="28" cy="14" r="4" fill="#c98a5c"/>
-        <circle cx="8" cy="26" r="4" fill="#c98a5c"/>
-        <circle cx="26" cy="26" r="4" fill="#c98a5c"/>
+        <path d="M17 2 C10 2 5 7 5 14 C5 22 17 32 17 32 C17 32 29 22 29 14 C29 7 24 2 17 2 Z" fill="#4A7182"/>
+        <circle cx="17" cy="14" r="5" fill="#C98A5C"/>
       </svg>
-      <span class="od-brand-name">offday</span>
+      <span class="od-brand-name">Rentplace</span>
     </a>
     <div>
       <?php if ($sesion_activa): ?>
@@ -121,7 +121,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
         <div id="mensaje-disponibilidad" class="od-availability-msg d-none"></div>
 
         <div class="od-transparency-note">
-          🐢 <span>Este es el precio final. offday no agrega comisión de servicio al huésped — nunca.</span>
+          🐢 <span>Este es el precio final. Rentplace no agrega comisión de servicio al huésped — nunca.</span>
         </div>
 
         <button type="submit" id="btn-reservar" class="od-btn od-btn-primary w-100" disabled>
@@ -136,4 +136,4 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="ficha_propiedad.js"></script>
 </body>
-</html>
+</html>

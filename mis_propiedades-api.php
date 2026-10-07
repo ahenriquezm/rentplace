@@ -16,6 +16,7 @@
 
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/tarifas.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -70,10 +71,35 @@ function accion_resumen(mysqli $conexion): void
     $ingresos = (float) $stmt->get_result()->fetch_assoc()['ingresos'];
     $stmt->close();
 
+    // ---- Tarifa Rentplace del mes en curso (ver tarifas.php) ----
+    $precios = [];
+    $stmt = $conexion->prepare('SELECT precio_noche FROM propiedades WHERE id_anfitrion = ? AND activo = 1');
+    $stmt->bind_param('i', $id_anfitrion);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($row = $res->fetch_assoc()) {
+        $precios[] = (float) $row['precio_noche'];
+    }
+    $stmt->close();
+
+    $stmt = $conexion->prepare(
+        "SELECT COALESCE(SUM(r.total), 0) AS ingresos FROM reservas r
+         INNER JOIN propiedades p ON p.id = r.id_propiedad
+         WHERE p.id_anfitrion = ? AND r.estado = 'confirmada'
+           AND r.fecha_llegada >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+           AND r.fecha_llegada < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01')"
+    );
+    $stmt->bind_param('i', $id_anfitrion);
+    $stmt->execute();
+    $ingresosMes = (float) $stmt->get_result()->fetch_assoc()['ingresos'];
+    $stmt->close();
+
     responder(true, [
         'total_propiedades'   => $totalPropiedades,
         'reservas_activas'    => $reservasActivas,
         'ingresos_confirmados'=> $ingresos,
+        'ingresos_mes'        => $ingresosMes,
+        'tarifa_mes'          => tarifa_calcular_mes($precios, $ingresosMes),
     ]);
 }
 
@@ -199,4 +225,4 @@ function responder(bool $success, $data, string $message = '', int $http_code = 
         'message' => $message,
     ], JSON_UNESCAPED_UNICODE);
     exit;
-}
+}

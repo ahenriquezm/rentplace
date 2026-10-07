@@ -22,7 +22,12 @@ if (isset($_SESSION['estado_sesion']) && $_SESSION['estado_sesion'] === 'activa'
     exit;
 }
 
-$redirect = $_GET['redirect'] ?? 'index.php';
+// Solo se permite volver a una página interna (ej. "checkout.php?reserva=12").
+// Evita redirecciones abiertas a otros dominios y URLs "javascript:" (XSS).
+$redirect = (string) ($_GET['redirect'] ?? '');
+if (!preg_match('/^[a-z0-9_\-]+\.php(\?[^\s<>"\'#]*)?$/i', $redirect)) {
+    $redirect = 'index.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -105,4 +110,4 @@ $redirect = $_GET['redirect'] ?? 'index.php';
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="login.js"></script>
 </body>
-</html>
+</html>

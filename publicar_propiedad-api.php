@@ -22,7 +22,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 const CARPETA_SUBIDAS = __DIR__ . '/uploads/propiedades/';
 const URL_SUBIDAS = 'uploads/propiedades/';
-const TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
+// MIME real (detectado del contenido, no del navegador) => extensión con que se guarda.
+const TIPOS_PERMITIDOS = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+const MAX_FOTOS = 20;
 const TAMANO_MAX_BYTES = 8 * 1024 * 1024; // 8 MB por foto
 
 $action = $_POST['action'] ?? '';
@@ -70,6 +72,8 @@ function accion_crear(mysqli $conexion): void
     $totalFotos = $fotos ? count($fotos['name']) : 0;
     if ($totalFotos < 3) {
         $errores[] = 'Sube al menos 3 fotos de la propiedad.';
+    } elseif ($totalFotos > MAX_FOTOS) {
+        $errores[] = 'Puedes subir hasta ' . MAX_FOTOS . ' fotos.';
     }
 
     if (!empty($errores)) {
@@ -79,6 +83,12 @@ function accion_crear(mysqli $conexion): void
     if (!is_dir(CARPETA_SUBIDAS)) {
         mkdir(CARPETA_SUBIDAS, 0755, true);
     }
+    // Defensa adicional: aunque llegara un archivo no-imagen, Apache no lo ejecuta como script.
+    if (!is_file(CARPETA_SUBIDAS . '.htaccess')) {
+        file_put_contents(CARPETA_SUBIDAS . '.htaccess', "php_flag engine off\nRemoveHandler .php .phtml .php5 .php7 .php8 .phar\nOptions -ExecCGI -Indexes\n");
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
 
     $conexion->begin_transaction();
 
@@ -111,15 +121,16 @@ function accion_crear(mysqli $conexion): void
             if ($fotos['error'][$i] !== UPLOAD_ERR_OK) {
                 continue; // se ignora un archivo individual con error, no se aborta toda la publicación
             }
-            if (!in_array($fotos['type'][$i], TIPOS_PERMITIDOS, true)) {
-                continue;
-            }
             if ($fotos['size'][$i] > TAMANO_MAX_BYTES) {
                 continue;
             }
+            // Nunca confiar en $fotos['type'] ni en la extensión del nombre: ambos los controla el cliente.
+            $mimeReal = $finfo->file($fotos['tmp_name'][$i]);
+            if (!isset(TIPOS_PERMITIDOS[$mimeReal]) || @getimagesize($fotos['tmp_name'][$i]) === false) {
+                continue;
+            }
 
-            $extension = pathinfo($fotos['name'][$i], PATHINFO_EXTENSION);
-            $nombreArchivo = uniqid('prop_' . $id_propiedad . '_', true) . '.' . strtolower($extension);
+            $nombreArchivo = 'prop_' . $id_propiedad . '_' . bin2hex(random_bytes(8)) . '.' . TIPOS_PERMITIDOS[$mimeReal];
             $rutaDestino = CARPETA_SUBIDAS . $nombreArchivo;
 
             if (move_uploaded_file($fotos['tmp_name'][$i], $rutaDestino)) {
@@ -175,4 +186,4 @@ function responder(bool $success, $data, string $message = '', int $http_code = 
         'message' => $message,
     ], JSON_UNESCAPED_UNICODE);
     exit;
-}
+}

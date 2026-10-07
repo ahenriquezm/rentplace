@@ -21,8 +21,27 @@ $(function () {
         <div class="mp-kpi"><div class="mp-kpi-valor">${d.total_propiedades}</div><div class="mp-kpi-label">Propiedades publicadas</div></div>
         <div class="mp-kpi"><div class="mp-kpi-valor">${d.reservas_activas}</div><div class="mp-kpi-label">Reservas próximas</div></div>
         <div class="mp-kpi"><div class="mp-kpi-valor">$${formatearMoneda(d.ingresos_confirmados)}</div><div class="mp-kpi-label">Ingresos confirmados</div></div>
+        ${tarifaHtml(d.tarifa_mes)}
       `);
     });
+  }
+
+  function tarifaHtml(t) {
+    if (!t) return '';
+    const pct = t.porcentaje_efectivo !== null
+      ? `${(t.porcentaje_efectivo * 100).toLocaleString('es-CL', { maximumFractionDigits: 1 })}% de lo que facturaste este mes`
+      : 'Sin reservas este mes: no pagas nada';
+    const ahorro = t.ahorro > 0
+      ? `<div class="mp-tarifa-ahorro">Ahorras $${formatearMoneda(t.ahorro)} vs. una comisión del 15,5%</div>`
+      : '';
+    return `
+      <div class="mp-kpi mp-kpi-tarifa">
+        <div class="mp-kpi-valor">$${formatearMoneda(t.a_pagar)}</div>
+        <div class="mp-kpi-label">Tu cuota Rentplace este mes · ${pct}</div>
+        <div class="mp-kpi-label">Plan fijo: $${formatearMoneda(t.cuota_plan)} (una noche por propiedad${t.descuento > 0 ? `, −${t.descuento * 100}% por volumen` : ''}). Nunca más del 10% de tus ingresos.</div>
+        ${ahorro}
+      </div>
+    `;
   }
 
   function cargarPropiedades() {
@@ -142,4 +161,4 @@ $(function () {
     return (str || '').replace(/"/g, '&quot;');
   }
 
-});
+});

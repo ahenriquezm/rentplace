@@ -3,8 +3,8 @@
  * conexion.php
  * Conexión única a la base de datos, usada por todos los módulos (*-api.php).
  *
- * IMPORTANTE: reemplaza los 4 valores de abajo por los datos reales de tu
- * base de datos en cPanel (sección "Bases de datos MySQL®").
+ * IMPORTANTE: copia config.example.php como config.php en el servidor y pon
+ * ahí los datos reales de tu base de datos en cPanel (sección "Bases de datos MySQL®").
  *
  * En hosting cPanel, normalmente:
  *   - El nombre de la base y del usuario vienen con el prefijo de tu cuenta,
@@ -12,15 +12,19 @@
  *     "tuducl_rentplace" y el usuario de BD "tuducl_rentplace_user".
  *   - El host casi siempre es "localhost".
  *
- * NO subas este archivo con las credenciales reales a un repositorio público.
+ * config.php está en .gitignore: nunca se sube al repositorio.
  */
 
-define('DB_HOST', 'localhost');
-define('DB_USUARIO', 'tuducl_admChekeadosDb');   // <-- reemplaza por tu usuario real de BD
-define('DB_PASSWORD', 'useradmin9876');    // <-- reemplaza por tu contraseña real de BD
-define('DB_NOMBRE', 'tuducl_rentplaceDB');  // <-- reemplaza por el nombre real de tu base de datos
-
-
+// Las credenciales NO se guardan en el repositorio. Se leen, en este orden, de:
+//   1. config.php (junto a este archivo, ignorado por git; ver config.example.php)
+//   2. Variables de entorno RENTPLACE_DB_HOST / _USUARIO / _PASSWORD / _NOMBRE
+if (is_file(__DIR__ . '/config.php')) {
+    require_once __DIR__ . '/config.php';
+}
+defined('DB_HOST')     || define('DB_HOST', getenv('RENTPLACE_DB_HOST') ?: 'localhost');
+defined('DB_USUARIO')  || define('DB_USUARIO', getenv('RENTPLACE_DB_USUARIO') ?: '');
+defined('DB_PASSWORD') || define('DB_PASSWORD', getenv('RENTPLACE_DB_PASSWORD') ?: '');
+defined('DB_NOMBRE')   || define('DB_NOMBRE', getenv('RENTPLACE_DB_NOMBRE') ?: '');
 
 mysqli_report(MYSQLI_REPORT_OFF); // manejamos los errores nosotros mismos, sin exponer detalles internos
 
@@ -40,4 +44,4 @@ if (!$conexion) {
     exit;
 }
 
-mysqli_set_charset($conexion, 'utf8mb4');
+mysqli_set_charset($conexion, 'utf8mb4');

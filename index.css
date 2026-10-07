@@ -23,6 +23,7 @@ a{ color:inherit; text-decoration:none; }
 .gap-2{ gap:8px; } .gap-3{ gap:12px; }
 .py-3{ padding-top:16px; padding-bottom:16px; }
 .mt-1{ margin-top:4px; } .mt-2{ margin-top:6px; }
+.d-none{ display:none !important; }
 
 /* ---------- Compartido (header/botones/marca) ---------- */
 .od-header{ border-bottom:1px solid var(--od-line); }
@@ -94,6 +95,48 @@ a{ color:inherit; text-decoration:none; }
 .idx-how-t{ font-size:17px; font-weight:700; }
 .idx-how-s{ font-size:14px; color:var(--od-muted); max-width:260px; }
 
+/* Estimador de suscripción */
+.idx-est{ scroll-margin-top:24px; }
+.idx-est-head{ max-width:640px; }
+.idx-est-eyebrow{ font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--od-gold-dark); margin-bottom:8px; }
+.idx-est-head .idx-section-title{ margin-bottom:10px; }
+.idx-est-lead{ font-size:16px; color:var(--od-muted); line-height:1.6; margin:0 0 28px; }
+.idx-est-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:stretch; }
+.idx-est-form{ display:flex; flex-direction:column; gap:26px; padding:30px; border:1px solid var(--od-line); border-radius:var(--od-radius); background:#fff; }
+.idx-est-field{ display:flex; flex-direction:column; gap:10px; }
+.idx-est-label{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:700; color:var(--od-muted); text-transform:uppercase; letter-spacing:.04em; }
+.idx-est-label output{ font-size:15px; color:var(--od-ink); text-transform:none; letter-spacing:0; }
+.idx-est-money{ display:flex; align-items:center; gap:6px; border:1px solid var(--od-line); border-radius:12px; padding:12px 16px; font-family:'Sora'; font-size:24px; font-weight:700; }
+.idx-est-money:focus-within{ border-color:var(--od-pine); box-shadow:0 0 0 3px rgba(74,113,130,.15); }
+.idx-est-money input{ border:none; outline:none; width:100%; font:inherit; color:var(--od-ink); background:transparent; }
+.idx-est-field input[type=range]{ width:100%; accent-color:var(--od-pine); height:24px; }
+.idx-est-scale{ display:flex; justify-content:space-between; font-size:12px; color:var(--od-muted-2); }
+.idx-est-plans{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.idx-est-plan{ position:relative; display:flex; flex-direction:column; gap:2px; padding:12px 14px; border:1px solid var(--od-line); border-radius:12px; cursor:pointer; }
+.idx-est-plan input{ position:absolute; opacity:0; }
+.idx-est-plan .n{ font-weight:700; font-size:15px; }
+.idx-est-plan .d{ font-size:12.5px; color:var(--od-muted-2); }
+.idx-est-plan:has(input:checked){ border-color:var(--od-pine); background:#EEF3F5; box-shadow:inset 0 0 0 1px var(--od-pine); }
+.idx-est-plan:has(input:checked) .d{ color:var(--od-pine-dark); font-weight:700; }
+.idx-est-plan:has(input:focus-visible){ outline:2px solid var(--od-pine); outline-offset:2px; }
+.idx-est-result{ display:flex; flex-direction:column; gap:14px; padding:30px; border-radius:var(--od-radius); background:var(--od-ink); color:#fff; }
+.idx-est-result .idx-est-label{ color:#B9BEB5; }
+.idx-est-cuota{ font-family:'Sora'; font-size:46px; font-weight:800; line-height:1; letter-spacing:-.02em; }
+.idx-est-cuota small{ font-size:16px; font-weight:600; color:#B9BEB5; margin-left:6px; letter-spacing:0; }
+.idx-est-periodo{ font-size:14px; color:#B9BEB5; }
+.idx-est-pct{ padding:14px 16px; border-radius:12px; background:rgba(255,255,255,.07); font-size:15px; }
+.idx-est-pct span{ font-family:'Sora'; font-weight:800; font-size:20px; color:var(--od-gold); }
+.idx-est-muted{ font-size:13px; color:#B9BEB5; margin-top:2px; }
+.idx-est-bars{ display:flex; flex-direction:column; gap:12px; }
+.idx-est-bar-top{ display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:6px; color:#DADDD6; }
+.idx-est-track{ height:10px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden; }
+.idx-est-fill{ height:100%; border-radius:6px; transition:width .25s ease; }
+.idx-est-fill.rp{ background:var(--od-gold); }
+.idx-est-fill.ab{ background:#8A909C; }
+.idx-est-ahorro{ font-weight:800; font-size:17px; color:#9FD3B4; }
+.idx-est-ahorro.neg{ color:#B9BEB5; font-weight:600; font-size:14px; }
+.idx-est-result .idx-btn-gold{ margin-top:6px; align-self:flex-start; }
+
 /* Anfitriones */
 .idx-host{ margin:60px 0 0; padding:56px; border-radius:28px; background:var(--od-ink); display:grid; grid-template-columns:1fr 0.85fr; gap:40px; align-items:center; }
 .idx-host-title{ font-family:'Sora'; font-size:32px; font-weight:800; color:#fff; line-height:1.15; margin:0; }
@@ -117,4 +160,17 @@ a{ color:inherit; text-decoration:none; }
   .idx-host{ grid-template-columns:1fr; }
   .idx-foot-grid{ grid-template-columns:1fr 1fr; }
   .idx-search-bar{ flex-wrap:wrap; }
+  .idx-est-grid{ grid-template-columns:1fr; }
+}
+
+@media (max-width:600px){
+  .container{ padding:0 16px; }
+  .idx-nav{ display:none; }
+  .idx-hero-title{ font-size:36px; }
+  .idx-seg{ flex:1 1 100%; border-right:none; border-bottom:1px solid var(--od-line); }
+  .idx-cat-grid, .idx-dest-grid{ grid-template-columns:1fr; }
+  .idx-how, .idx-host{ padding:32px 20px; }
+  .idx-est-form, .idx-est-result{ padding:22px 18px; }
+  .idx-est-cuota{ font-size:38px; }
+  .idx-est-plan{ padding:10px; }
 }

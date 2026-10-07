@@ -52,7 +52,7 @@ $tipo      = $_GET['tipo'] ?? '';
         <a href="mis_reservas.php" class="od-btn od-btn-dark">Mis reservas</a>
       <?php else: ?>
         <a href="login.php" class="od-btn od-btn-ghost">Ingresar</a>
-        <a href="registro.php" class="od-btn od-btn-dark">Crear cuenta</a>
+        <a href="login.php?tab=registro" class="od-btn od-btn-dark">Crear cuenta</a>
       <?php endif; ?>
     </div>
   </div>

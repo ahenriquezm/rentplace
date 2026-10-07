@@ -99,7 +99,7 @@ function accion_resumen(mysqli $conexion): void
         'reservas_activas'    => $reservasActivas,
         'ingresos_confirmados'=> $ingresos,
         'ingresos_mes'        => $ingresosMes,
-        'tarifa_mes'          => tarifa_calcular_mes($precios, $ingresosMes),
+        'cuotas'              => tarifa_cuotas_anfitrion($precios),
     ]);
 }
 

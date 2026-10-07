@@ -9,6 +9,9 @@ $(function () {
   const redirectUrl = $('#redirect-url').val() || 'index.php';
 
   bindTabs();
+  if (new URLSearchParams(window.location.search).get('tab') === 'registro') {
+    $('.lg-tab[data-tab="registro"]').trigger('click');
+  }
   bindFormIngresar();
   bindFormRegistro();
 

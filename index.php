@@ -9,6 +9,7 @@
  *     Variables esperadas: $_SESSION['estado_sesion'], $_SESSION['nombre_usuario']
  */
 require_once __DIR__ . '/control_lanzamiento.php'; // mientras MODO_COMINGSOON=true, redirige a comingsoon.php
+require_once __DIR__ . '/tarifas.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -16,6 +17,12 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $sesion_activa = isset($_SESSION['estado_sesion']) && $_SESSION['estado_sesion'] === 'activa';
 $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario']) : '';
+
+// El estimador (index.js) usa exactamente los mismos planes que cobra el sistema.
+$tarifas_json = htmlspecialchars(json_encode([
+    'planes'     => TARIFA_PLANES,
+    'referencia' => TARIFA_REFERENCIA_AIRBNB,
+]), ENT_QUOTES);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -41,6 +48,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
     <nav class="idx-nav">
       <a href="buscar.php">Explorar</a>
       <a href="#como-funciona">Cómo funciona</a>
+      <a href="#precios">Precios anfitrión</a>
       <a href="publicar_propiedad.php">Publica tu propiedad</a>
     </nav>
     <div class="d-flex align-items-center gap-3">
@@ -49,7 +57,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
         <a href="mis_reservas.php" class="od-btn od-btn-dark">Mis reservas</a>
       <?php else: ?>
         <a href="login.php" class="od-btn od-btn-ghost">Ingresar</a>
-        <a href="registro.php" class="od-btn od-btn-dark">Crear cuenta</a>
+        <a href="login.php?tab=registro" class="od-btn od-btn-dark">Crear cuenta</a>
       <?php endif; ?>
     </div>
   </div>
@@ -81,7 +89,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
           <label class="idx-label" for="hero-huespedes">Huéspedes</label>
           <input type="number" id="hero-huespedes" name="huespedes" class="idx-seg-input" min="1" placeholder="¿Cuántos?">
         </div>
-        <button type="submit" class="idx-search-go">⌕</button>
+        <button type="submit" class="idx-search-go" aria-label="Buscar">⌕</button>
       </form>
     </section>
 
@@ -119,11 +127,79 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
       </div>
     </section>
 
+    <!-- ESTIMADOR DE SUSCRIPCIÓN (anfitriones) -->
+    <section class="idx-block idx-est" id="precios" data-tarifas="<?= $tarifas_json ?>">
+      <div class="idx-est-head">
+        <div class="idx-est-eyebrow">Para anfitriones</div>
+        <h2 class="idx-section-title">Pagas 1 noche al mes. Nada más.</h2>
+        <p class="idx-est-lead">Sin comisión por reserva: una suscripción fija por propiedad equivalente a una noche de arriendo.
+          Paga semestral o anual y ahorra hasta un 30%. Mientras más arriendas, menos pagas en proporción.</p>
+      </div>
+
+      <div class="idx-est-grid">
+        <form class="idx-est-form" id="est-form" onsubmit="return false;">
+          <div class="idx-est-field">
+            <label for="est-precio" class="idx-est-label">Precio por noche de tu propiedad</label>
+            <div class="idx-est-money">
+              <span>$</span>
+              <input type="text" id="est-precio" inputmode="numeric" value="50.000" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="idx-est-field">
+            <label for="est-noches" class="idx-est-label">
+              Noches que arriendas al mes <output id="est-noches-out" for="est-noches">15</output>
+            </label>
+            <input type="range" id="est-noches" min="1" max="30" value="15">
+            <div class="idx-est-scale"><span>1</span><span>15</span><span>30</span></div>
+          </div>
+
+          <div class="idx-est-field">
+            <span class="idx-est-label" id="est-plan-label">Plan</span>
+            <div class="idx-est-plans" role="radiogroup" aria-labelledby="est-plan-label">
+              <?php foreach (TARIFA_PLANES as $clave => $plan): ?>
+                <label class="idx-est-plan">
+                  <input type="radio" name="est-plan" value="<?= $clave ?>" <?= $clave === 'anual' ? 'checked' : '' ?>>
+                  <span class="n"><?= $plan['nombre'] ?></span>
+                  <span class="d"><?= $plan['factor'] < 1 ? '−' . round((1 - $plan['factor']) * 100) . '%' : 'Sin permanencia' ?></span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </form>
+
+        <div class="idx-est-result" aria-live="polite">
+          <div class="idx-est-label">Tu suscripción</div>
+          <div class="idx-est-cuota"><span id="est-cuota">$35.000</span><small>/ mes</small></div>
+          <div class="idx-est-periodo" id="est-periodo">Pagas $420.000 al año</div>
+
+          <div class="idx-est-pct">
+            <div><span id="est-pct">4,7%</span> de lo que facturas</div>
+            <div class="idx-est-muted" id="est-facturas">Facturas $750.000 al mes</div>
+          </div>
+
+          <div class="idx-est-bars">
+            <div class="idx-est-bar">
+              <div class="idx-est-bar-top"><span>Rentplace</span><b id="est-rp-val">$35.000</b></div>
+              <div class="idx-est-track"><div class="idx-est-fill rp" id="est-rp-bar"></div></div>
+            </div>
+            <div class="idx-est-bar">
+              <div class="idx-est-bar-top"><span>Comisión típica de 15,5%</span><b id="est-ab-val">$116.250</b></div>
+              <div class="idx-est-track"><div class="idx-est-fill ab" id="est-ab-bar"></div></div>
+            </div>
+          </div>
+
+          <div class="idx-est-ahorro" id="est-ahorro">Ahorras $975.000 al año</div>
+          <a href="publicar_propiedad.php" class="idx-btn-gold">Publicar mi propiedad</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ANFITRIONES -->
     <section class="idx-host">
       <div>
         <h2 class="idx-host-title">¿Tienes una propiedad?<br>Publícala en Rentplace.</h2>
-        <p class="idx-host-sub">Llega a viajeros que buscan cabañas, deptos y casas para descansar. Sin comisiones sorpresa, con soporte real.</p>
+        <p class="idx-host-sub">Llega a viajeros que buscan cabañas, deptos y casas para descansar. Pagas 1 noche al mes por propiedad y el resto de cada reserva es tuyo.</p>
         <a href="publicar_propiedad.php" class="idx-btn-gold">Publica tu propiedad</a>
       </div>
       <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600" alt="Anfitrión entregando llaves">
@@ -150,7 +226,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
         <div class="idx-foot-col">
           <div class="idx-foot-head">Anfitriones</div>
           <a href="publicar_propiedad.php">Publica tu propiedad</a>
-          <a href="ayuda.php">Centro de ayuda</a>
+          <a href="#precios">Precios y planes</a>
         </div>
         <div class="idx-foot-col">
           <div class="idx-foot-head">Contacto</div>

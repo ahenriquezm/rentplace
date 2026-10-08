@@ -106,7 +106,8 @@ $(function () {
   }
 
   function bindFechasHero() {
-    const hoy = new Date().toISOString().slice(0, 10);
+    const ahora = new Date();
+    const hoy = ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0');
     $('#hero-llegada').attr('min', hoy);
     $('#hero-salida').attr('min', hoy);
     $('#hero-llegada').on('change', function () {

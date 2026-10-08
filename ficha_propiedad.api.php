@@ -43,7 +43,7 @@ function accion_detalle(mysqli $conexion): void
     }
 
     $stmt = $conexion->prepare(
-        'SELECT p.id, p.titulo, p.ciudad, p.region, p.capacidad, p.habitaciones, p.banos,
+        'SELECT p.id, p.titulo, p.descripcion, p.tipo, p.ciudad, p.region, p.capacidad, p.habitaciones, p.banos,
                 p.precio_noche, p.precio_limpieza,
                 u.id AS id_anfitrion, u.nombre AS anfitrion_nombre, u.avatar_url,
                 YEAR(u.creado_en) AS anfitrion_anio_registro,
@@ -91,6 +91,8 @@ function accion_detalle(mysqli $conexion): void
     responder(true, [
         'id'              => (int) $propiedad['id'],
         'titulo'          => $propiedad['titulo'],
+        'descripcion'     => $propiedad['descripcion'],
+        'tipo'            => $propiedad['tipo'],
         'ciudad'          => $propiedad['ciudad'],
         'region'          => $propiedad['region'],
         'capacidad'       => (int) $propiedad['capacidad'],

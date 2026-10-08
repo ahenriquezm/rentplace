@@ -26,10 +26,7 @@ críticas y el pago está simulado.
 
 ## 2. Pendiente — bloquea el lanzamiento
 
-1. **Falta `ficha_propiedad.js`** (sin él no se puede reservar). Antes también faltaban `index.js`, `index-api.php`,
-   `registro.php` (enlazado en el header; el registro real está en una pestaña de `login.php`) y `ayuda.php`.
-   Sin `ficha_propiedad.js` **no se puede reservar**. Además la API se llama `ficha_propiedad.api.php`
-   (con punto) mientras todos los demás usan guion: confirmar qué nombre usa el JS que falta.
+1. ~~Faltaban archivos~~: `ficha_propiedad.js`, `index.js` e `index-api.php` ya están creados. La ficha muestra galería, descripción, servicios, precio total en vivo y barra fija para reservar en el celular; sin sesión pide iniciar sesión y vuelve con las mismas fechas.
 2. **Pago simulado** (`checkout-api.php`): cualquier reserva se marca "confirmada" sin cobrar. Integrar
    Webpay Plus / Mercado Pago / Flow con confirmación por webhook. Los campos de tarjeta del formulario
    deben eliminarse y reemplazarse por el formulario/redirect de la pasarela (nunca manejar tarjetas propias).

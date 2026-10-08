@@ -1,4 +1,4 @@
-/* ficha_propiedad.css — estilos del módulo, sobre Bootstrap 5 */
+/* ficha_propiedad.css — estilos del módulo de ficha de propiedad */
 
 :root{
   --od-bg:#FFFFFF;
@@ -12,7 +12,15 @@
   --od-radius:20px;
 }
 
+*{ box-sizing:border-box; }
+a{ color:inherit; text-decoration:none; }
+.container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+.d-flex{ display:flex; } .align-items-center{ align-items:center; } .justify-content-between{ justify-content:space-between; }
+.gap-2{ gap:8px; } .py-3{ padding-top:16px; padding-bottom:16px; } .mb-2{ margin-bottom:8px; } .w-100{ width:100%; }
+.d-none{ display:none !important; }
+
 body{
+  margin:0; -webkit-font-smoothing:antialiased;
   background:var(--od-bg);
   color:var(--od-ink);
   font-family:'Manrope', sans-serif;
@@ -34,6 +42,7 @@ body{
 
 /* Galería */
 .od-gallery{ display:grid; grid-template-columns:1.4fr 1fr; gap:8px; border-radius:24px; overflow:hidden; height:410px; }
+.od-gallery.od-gallery-single{ grid-template-columns:1fr; }
 .od-gallery-side{ display:grid; grid-template-rows:1fr 1fr; gap:8px; }
 .od-gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
 .od-skeleton{ width:100%; height:100%; background:linear-gradient(90deg,#F0EEE9 25%,#F7F6F3 37%,#F0EEE9 63%); background-size:400% 100%; animation:od-shimmer 1.4s ease infinite; border-radius:14px; }
@@ -49,6 +58,15 @@ body{
 .od-avatar{ width:52px; height:52px; border-radius:50%; object-fit:cover; }
 
 .od-amenity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:14.5px; }
+.od-description{ font-size:15px; line-height:1.7; color:#3E434B; white-space:pre-line; }
+.od-description.recortada{ max-height:10.2em; overflow:hidden; position:relative; }
+.od-description.recortada::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:3em; background:linear-gradient(transparent, #fff); }
+.od-link-btn{ background:none; border:none; padding:0; margin-top:10px; font-weight:700; font-size:14.5px; color:var(--od-ink); text-decoration:underline; cursor:pointer; }
+.od-specs{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:15px; margin-top:4px; }
+.od-gallery img{ cursor:zoom-in; }
+.od-gallery-count{ position:relative; }
+.od-gallery-count span{ position:absolute; right:12px; bottom:12px; background:rgba(255,255,255,.92); color:var(--od-ink); font-size:13px; font-weight:700; padding:6px 11px; border-radius:9px; pointer-events:none; }
+.od-not-found{ text-align:center; padding:80px 0; }
 
 /* Tarjeta de reserva */
 .od-booking-card{ border:1px solid var(--od-line); border-radius:22px; padding:24px; position:sticky; top:24px; box-shadow:0 16px 36px rgba(35,39,46,0.08); background:#fff; height:fit-content; }
@@ -69,3 +87,19 @@ body{
 .od-availability-msg.error{ background:#FBEAEA; color:#B23B3B; }
 
 .od-transparency-note{ display:flex; gap:9px; align-items:flex-start; background:#EAF1F3; border-radius:14px; padding:13px 15px; font-size:12.5px; color:var(--od-pine-dark); margin:16px 0; line-height:1.5; font-weight:600; }
+/* Barra inferior fija en móvil: precio total + Reservar siempre a mano */
+.od-mobile-bar{ display:none; }
+
+@media (max-width:900px){
+  .od-detail-body{ grid-template-columns:1fr; gap:24px; }
+  .od-booking-card{ position:static; }
+  .od-gallery{ grid-template-columns:1fr; height:280px; border-radius:18px; }
+  .od-gallery-side{ display:none; }
+  .od-title{ font-size:24px; }
+  .od-amenity-grid{ grid-template-columns:1fr; }
+  .od-mobile-bar{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:30; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; background:#fff; border-top:1px solid var(--od-line); box-shadow:0 -8px 24px rgba(35,39,46,.08); }
+  .od-mobile-bar .od-btn-primary{ padding:12px 22px; }
+  .od-mobile-bar b{ font-family:'Sora'; font-size:17px; }
+  body{ padding-bottom:80px; }
+  .container{ padding:0 16px; }
+}

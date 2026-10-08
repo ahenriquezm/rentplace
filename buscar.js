@@ -119,10 +119,14 @@ $(function () {
   }
 
   function tarjetaHtml(p) {
+    // Lleva las fechas y huéspedes buscados a la ficha, para no volver a escribirlos.
+    const f = obtenerFiltros();
+    const params = new URLSearchParams({ id: p.id });
+    ['llegada', 'salida', 'huespedes'].forEach(function (k) { if (f[k]) params.set(k, f[k]); });
     const rating = p.rating_promedio ? `★ ${parseFloat(p.rating_promedio).toFixed(1)}` : 'Nuevo';
     const foto = p.foto_portada || 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=500';
     return `
-      <a href="ficha_propiedad.php?id=${p.id}" class="bs-card">
+      <a href="ficha_propiedad.php?${params.toString()}" class="bs-card">
         <div class="photo" style="background-image:url('${escapeAttr(foto)}')">
           <div class="bs-price-final"><div class="dot"></div>Precio final $${formatearMoneda(p.precio_noche)}</div>
         </div>

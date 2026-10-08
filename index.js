@@ -119,13 +119,14 @@ $(function () {
     });
   }
 
-  /* ==================== ESTIMADOR DE SUSCRIPCIÓN ==================== */
+  /* ==================== ESTIMADOR (plan Reservas vs. comisión) ==================== */
 
   function iniciarEstimador() {
     const $seccion = $('#precios');
     if ($seccion.length === 0) return;
 
-    const tarifas = $seccion.data('tarifas'); // { planes: {mensual:{nombre,meses,factor},...}, referencia: 0.155 }
+    const tarifas = $seccion.data('tarifas'); // { planes: {vitrina:{precio_anual,...},...}, referencia: 0.155 }
+    const plan = tarifas.planes.reservas;
     const $precio = $('#est-precio');
     const $noches = $('#est-noches');
 
@@ -135,7 +136,6 @@ $(function () {
       calcular();
     });
     $noches.on('input', calcular);
-    $('input[name="est-plan"]').on('change', calcular);
 
     calcular();
 
@@ -146,33 +146,33 @@ $(function () {
     function calcular() {
       const precio = leerPrecio();
       const noches = parseInt($noches.val(), 10);
-      const plan = tarifas.planes[$('input[name="est-plan"]:checked').val()] || tarifas.planes.mensual;
+      const costoPlan = plan.precio_anual;
 
-      const cuota = Math.round(precio * plan.factor);
-      const facturacion = precio * noches;
-      const comisionTipica = Math.round(facturacion * tarifas.referencia);
-      const pct = facturacion > 0 ? cuota / facturacion : 0;
-      const ahorroAnual = (comisionTipica - cuota) * 12;
+      const facturacionAnual = precio * noches * 12;
+      const comisionAnual = Math.round(facturacionAnual * tarifas.referencia);
+      const pct = facturacionAnual > 0 ? costoPlan / facturacionAnual : 0;
+      const ahorro = comisionAnual - costoPlan;
+      const nochesEquilibrio = precio > 0 ? Math.ceil(costoPlan / (precio * tarifas.referencia)) : 0;
 
       $('#est-noches-out').text(noches + (noches === 1 ? ' noche' : ' noches'));
-      $('#est-cuota').text('$' + formatearMoneda(cuota));
-      $('#est-periodo').text(plan.meses === 1
-        ? 'Pago mes a mes, sin permanencia'
-        : `Pagas $${formatearMoneda(cuota * plan.meses)} cada ${plan.meses === 12 ? 'año' : '6 meses'}`);
+      $('#est-cuota').text('$' + formatearMoneda(costoPlan));
+      $('#est-periodo').text(`Facturas $${formatearMoneda(facturacionAnual)} al año`);
       $('#est-pct').text(formatearPorcentaje(pct));
-      $('#est-facturas').text(`Facturas $${formatearMoneda(facturacion)} al mes`);
-      $('#est-rp-val').text('$' + formatearMoneda(cuota));
-      $('#est-ab-val').text('$' + formatearMoneda(comisionTipica));
+      $('#est-equilibrio').text(nochesEquilibrio
+        ? `Se paga solo con ${nochesEquilibrio} noche${nochesEquilibrio === 1 ? '' : 's'} arrendada${nochesEquilibrio === 1 ? '' : 's'} al año`
+        : '');
+      $('#est-rp-val').text('$' + formatearMoneda(costoPlan));
+      $('#est-ab-val').text('$' + formatearMoneda(comisionAnual));
 
-      const maximo = Math.max(cuota, comisionTipica, 1);
-      $('#est-rp-bar').css('width', (cuota / maximo * 100) + '%');
-      $('#est-ab-bar').css('width', (comisionTipica / maximo * 100) + '%');
+      const maximo = Math.max(costoPlan, comisionAnual, 1);
+      $('#est-rp-bar').css('width', (costoPlan / maximo * 100) + '%');
+      $('#est-ab-bar').css('width', (comisionAnual / maximo * 100) + '%');
 
       $('#est-ahorro')
-        .toggleClass('neg', ahorroAnual <= 0)
-        .text(ahorroAnual > 0
-          ? `Ahorras $${formatearMoneda(ahorroAnual)} al año`
-          : 'Con tan pocas noches, una comisión por reserva te sale más barata');
+        .toggleClass('neg', ahorro <= 0)
+        .text(ahorro > 0
+          ? `Ahorras $${formatearMoneda(ahorro)} al año`
+          : 'Con tan pocas noches al año, una comisión por reserva te sale más barata');
     }
   }
 

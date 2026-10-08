@@ -21,25 +21,21 @@ $(function () {
         <div class="mp-kpi"><div class="mp-kpi-valor">${d.total_propiedades}</div><div class="mp-kpi-label">Propiedades publicadas</div></div>
         <div class="mp-kpi"><div class="mp-kpi-valor">${d.reservas_activas}</div><div class="mp-kpi-label">Reservas próximas</div></div>
         <div class="mp-kpi"><div class="mp-kpi-valor">$${formatearMoneda(d.ingresos_confirmados)}</div><div class="mp-kpi-label">Ingresos confirmados</div></div>
-        ${tarifaHtml(d.cuotas, d.ingresos_mes)}
+        ${tarifaHtml(d.costos_planes, d.propiedades_activas)}
       `);
     });
   }
 
-  function tarifaHtml(cuotas, ingresosMes) {
-    if (!cuotas || !cuotas.mensual) return '';
-    const pct = function (cuota) {
-      if (!ingresosMes) return '';
-      const v = (cuota / ingresosMes * 100).toLocaleString('es-CL', { maximumFractionDigits: 1 });
-      return ` · ${v}% de lo facturado este mes`;
-    };
+  function tarifaHtml(costos, propiedades) {
+    if (!costos || !propiedades) return '';
+    const valor = function (c) { return c === null ? 'Próximamente' : `<b>$${formatearMoneda(c)}</b>/año`; };
     return `
       <div class="mp-kpi mp-kpi-tarifa">
-        <div class="mp-kpi-label">Tu suscripción Rentplace: 1 noche al mes por propiedad, sin comisión por reserva</div>
+        <div class="mp-kpi-label">Planes Rentplace para tus ${propiedades} propiedad${propiedades === 1 ? '' : 'es'} activa${propiedades === 1 ? '' : 's'} · sin comisión por reserva</div>
         <div class="mp-tarifa-planes">
-          <div><b>$${formatearMoneda(cuotas.mensual)}</b>/mes · Mensual${pct(cuotas.mensual)}</div>
-          <div><b>$${formatearMoneda(cuotas.semestral)}</b>/mes · Semestral −15%${pct(cuotas.semestral)}</div>
-          <div><b>$${formatearMoneda(cuotas.anual)}</b>/mes · Anual −30%${pct(cuotas.anual)}</div>
+          <div>${valor(costos.vitrina)} · Vitrina</div>
+          <div>${valor(costos.reservas)} · Reservas</div>
+          <div>${valor(costos.pro)} · Pro (pago online)</div>
         </div>
       </div>
     `;

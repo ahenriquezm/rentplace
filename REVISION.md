@@ -52,24 +52,28 @@ críticas y el pago está simulado.
 - El formulario del *coming soon* pide el perfil (huésped/anfitrión) pero no lo envía a la API: se pierde el dato de segmentación.
 - Accesibilidad: el botón de búsqueda "⌕" no tiene texto accesible; contraste de textos grises; foco visible.
 
-## 4. Modelo de cobro: suscripción de 1 noche al mes
+## 4. Modelo de cobro: planes anuales por propiedad, sin comisión
 
-Simple y fijo, implementado en `tarifas.php` (lo usan el estimador del inicio y el panel del anfitrión):
+Definido en `tarifas.php` (lo usan el inicio y el panel del anfitrión). Precios con IVA incluido.
 
-| Plan | Precio por propiedad | Con 20 noches arrendadas equivale a |
-|---|---|---:|
-| Mensual (sin permanencia) | 1 noche al mes | 5,0% |
-| Semestral | 1 noche al mes −15% | 4,3% |
-| Anual | 1 noche al mes −30% | 3,5% |
+| Plan | Precio | Incluye |
+|---|---:|---|
+| Vitrina | $29.990 / año | Página propia con fotos, link para compartir, botón de contacto. Sin calendario ni reservas |
+| Reservas | $99.990 / año | + calendario, reservas con confirmación manual, pago por transferencia confirmado por el anfitrión |
+| Pro | Por definir | + pago online con pasarela; el anfitrión elige cobrar el total o un % de anticipo |
 
-- El huésped no paga comisión de servicio.
-- Nunca se cobra un porcentaje de las reservas: mientras más arriendas, menos pagas en proporción.
-- Comisión equivalente = (factor del plan) ÷ (noches arrendadas en el mes). No depende del precio.
-- Punto de equilibrio frente a una comisión de 15,5%: mensual ≈ 6,5 noches/mes, anual ≈ 4,5 noches/mes.
-  Con menos noches que eso, al anfitrión le conviene más una comisión (el estimador lo muestra con honestidad).
+El estimador del inicio compara el plan Reservas con una comisión de 15,5% según el precio por noche y
+las noches arrendadas, y muestra con cuántas noches al año se paga solo (≈13 noches para una noche de $50.000).
 
-El inicio (`index.php#precios`) tiene un estimador: precio por noche + noches al mes + plan → cuota mensual,
-total del período, % equivalente, comparación con una comisión de 15,5% y ahorro anual.
+**Riesgos a vigilar**
+- Vitrina deja ≈$24.400 netos al año por cliente (descontando IVA y cobro con tarjeta): solo es rentable con
+  cero soporte y si una parte pasa a Reservas. Es la puerta de entrada, no el motor de ingresos.
+- Reservas con pago manual: las reservas pendientes deben vencer solas (ej. 48 h) para no bloquear el calendario.
+- Anticipo parcial (Pro): definir dónde se paga el saldo, quién lo registra y la política de cancelación del
+  anticipo, mostrada al huésped antes de pagar. La pasarela debe ser la cuenta propia de cada anfitrión
+  (Mercado Pago / Flow); Rentplace no debe recibir el dinero de los huéspedes.
+- Cobro anual por adelantado de $99.990 puede frenar a anfitriones pequeños: evaluar opción mensual más cara.
+- Las propiedades en plan Vitrina no deben mezclarse con las de reserva inmediata en el buscador.
 
-**A decidir antes de lanzar:** quién absorbe el costo de la pasarela de pago (≈1,5%–3,5%) y validar la
-comisión de referencia vigente (`TARIFA_REFERENCIA_AIRBNB`).
+**Pendiente de construir:** la página Vitrina pública, el registro del plan de cada anfitrión, la confirmación
+manual de reservas y pagos con vencimiento, y la integración de pasarela con anticipo configurable.

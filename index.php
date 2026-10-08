@@ -127,17 +127,39 @@ $tarifas_json = htmlspecialchars(json_encode([
       </div>
     </section>
 
-    <!-- ESTIMADOR DE SUSCRIPCIÓN (anfitriones) -->
+    <!-- PLANES Y ESTIMADOR (anfitriones) -->
     <section class="idx-block idx-est" id="precios" data-tarifas="<?= $tarifas_json ?>">
       <div class="idx-est-head">
         <div class="idx-est-eyebrow">Para anfitriones</div>
-        <h2 class="idx-section-title">Pagas 1 noche al mes. Nada más.</h2>
-        <p class="idx-est-lead">Sin comisión por reserva: una suscripción fija por propiedad equivalente a una noche de arriendo.
-          Paga semestral o anual y ahorra hasta un 30%. Mientras más arriendas, menos pagas en proporción.</p>
+        <h2 class="idx-section-title">Sin comisión por reserva. Un solo pago al año.</h2>
+        <p class="idx-est-lead">Elige lo que necesitas: solo mostrar tu propiedad, o también recibir y cobrar reservas.
+          Lo que arriendas es 100% tuyo.</p>
+      </div>
+
+      <div class="idx-plan-grid">
+        <?php foreach (TARIFA_PLANES as $clave => $plan): ?>
+          <div class="idx-plan <?= $clave === 'reservas' ? 'destacado' : '' ?>">
+            <?php if ($clave === 'reservas'): ?><div class="idx-plan-tag">Recomendado</div><?php endif; ?>
+            <div class="idx-plan-nombre"><?= htmlspecialchars($plan['nombre']) ?></div>
+            <?php if ($plan['precio_anual'] !== null): ?>
+              <div class="idx-plan-precio">$<?= number_format($plan['precio_anual'], 0, ',', '.') ?><small> / año</small></div>
+              <div class="idx-plan-mes">Equivale a $<?= number_format($plan['precio_anual'] / 12, 0, ',', '.') ?> al mes · por propiedad</div>
+            <?php else: ?>
+              <div class="idx-plan-precio">Próximamente</div>
+              <div class="idx-plan-mes">Te avisamos al lanzar</div>
+            <?php endif; ?>
+            <ul class="idx-plan-lista">
+              <?php foreach ($plan['incluye'] as $item): ?>
+                <li><?= htmlspecialchars($item) ?></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endforeach; ?>
       </div>
 
       <div class="idx-est-grid">
         <form class="idx-est-form" id="est-form" onsubmit="return false;">
+          <div class="idx-est-sub">¿Cuánto te ahorras frente a una comisión?</div>
           <div class="idx-est-field">
             <label for="est-precio" class="idx-est-label">Precio por noche de tu propiedad</label>
             <div class="idx-est-money">
@@ -148,48 +170,35 @@ $tarifas_json = htmlspecialchars(json_encode([
 
           <div class="idx-est-field">
             <label for="est-noches" class="idx-est-label">
-              Noches que arriendas al mes <output id="est-noches-out" for="est-noches">15</output>
+              Noches que arriendas al mes <output id="est-noches-out" for="est-noches">10 noches</output>
             </label>
-            <input type="range" id="est-noches" min="1" max="30" value="15">
+            <input type="range" id="est-noches" min="1" max="30" value="10">
             <div class="idx-est-scale"><span>1</span><span>15</span><span>30</span></div>
-          </div>
-
-          <div class="idx-est-field">
-            <span class="idx-est-label" id="est-plan-label">Plan</span>
-            <div class="idx-est-plans" role="radiogroup" aria-labelledby="est-plan-label">
-              <?php foreach (TARIFA_PLANES as $clave => $plan): ?>
-                <label class="idx-est-plan">
-                  <input type="radio" name="est-plan" value="<?= $clave ?>" <?= $clave === 'anual' ? 'checked' : '' ?>>
-                  <span class="n"><?= $plan['nombre'] ?></span>
-                  <span class="d"><?= $plan['factor'] < 1 ? '−' . round((1 - $plan['factor']) * 100) . '%' : 'Sin permanencia' ?></span>
-                </label>
-              <?php endforeach; ?>
-            </div>
           </div>
         </form>
 
         <div class="idx-est-result" aria-live="polite">
-          <div class="idx-est-label">Tu suscripción</div>
-          <div class="idx-est-cuota"><span id="est-cuota">$35.000</span><small>/ mes</small></div>
-          <div class="idx-est-periodo" id="est-periodo">Pagas $420.000 al año</div>
+          <div class="idx-est-label">Con el plan Reservas</div>
+          <div class="idx-est-cuota"><span id="est-cuota">$99.990</span><small>/ año</small></div>
+          <div class="idx-est-periodo" id="est-periodo">Facturas $6.000.000 al año</div>
 
           <div class="idx-est-pct">
-            <div><span id="est-pct">4,7%</span> de lo que facturas</div>
-            <div class="idx-est-muted" id="est-facturas">Facturas $750.000 al mes</div>
+            <div><span id="est-pct">1,7%</span> de lo que facturas</div>
+            <div class="idx-est-muted" id="est-equilibrio">Se paga solo con 13 noches arrendadas al año</div>
           </div>
 
           <div class="idx-est-bars">
             <div class="idx-est-bar">
-              <div class="idx-est-bar-top"><span>Rentplace</span><b id="est-rp-val">$35.000</b></div>
+              <div class="idx-est-bar-top"><span>Rentplace Reservas</span><b id="est-rp-val">$99.990</b></div>
               <div class="idx-est-track"><div class="idx-est-fill rp" id="est-rp-bar"></div></div>
             </div>
             <div class="idx-est-bar">
-              <div class="idx-est-bar-top"><span>Comisión típica de 15,5%</span><b id="est-ab-val">$116.250</b></div>
+              <div class="idx-est-bar-top"><span>Comisión típica de 15,5%</span><b id="est-ab-val">$930.000</b></div>
               <div class="idx-est-track"><div class="idx-est-fill ab" id="est-ab-bar"></div></div>
             </div>
           </div>
 
-          <div class="idx-est-ahorro" id="est-ahorro">Ahorras $975.000 al año</div>
+          <div class="idx-est-ahorro" id="est-ahorro">Ahorras $830.010 al año</div>
           <a href="publicar_propiedad.php" class="idx-btn-gold">Publicar mi propiedad</a>
         </div>
       </div>
@@ -199,7 +208,7 @@ $tarifas_json = htmlspecialchars(json_encode([
     <section class="idx-host">
       <div>
         <h2 class="idx-host-title">¿Tienes una propiedad?<br>Publícala en Rentplace.</h2>
-        <p class="idx-host-sub">Llega a viajeros que buscan cabañas, deptos y casas para descansar. Pagas 1 noche al mes por propiedad y el resto de cada reserva es tuyo.</p>
+        <p class="idx-host-sub">Llega a viajeros que buscan cabañas, deptos y casas para descansar. Un pago fijo al año, sin comisión: cada reserva es 100% tuya.</p>
         <a href="publicar_propiedad.php" class="idx-btn-gold">Publica tu propiedad</a>
       </div>
       <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600" alt="Anfitrión entregando llaves">

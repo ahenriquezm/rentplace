@@ -71,15 +71,11 @@ function accion_resumen(mysqli $conexion): void
     $ingresos = (float) $stmt->get_result()->fetch_assoc()['ingresos'];
     $stmt->close();
 
-    // ---- Tarifa Rentplace del mes en curso (ver tarifas.php) ----
-    $precios = [];
-    $stmt = $conexion->prepare('SELECT precio_noche FROM propiedades WHERE id_anfitrion = ? AND activo = 1');
+    // ---- Costo anual de cada plan para sus propiedades activas (ver tarifas.php) ----
+    $stmt = $conexion->prepare('SELECT COUNT(*) AS total FROM propiedades WHERE id_anfitrion = ? AND activo = 1');
     $stmt->bind_param('i', $id_anfitrion);
     $stmt->execute();
-    $res = $stmt->get_result();
-    while ($row = $res->fetch_assoc()) {
-        $precios[] = (float) $row['precio_noche'];
-    }
+    $propiedadesActivas = (int) $stmt->get_result()->fetch_assoc()['total'];
     $stmt->close();
 
     $stmt = $conexion->prepare(
@@ -99,7 +95,8 @@ function accion_resumen(mysqli $conexion): void
         'reservas_activas'    => $reservasActivas,
         'ingresos_confirmados'=> $ingresos,
         'ingresos_mes'        => $ingresosMes,
-        'cuotas'              => tarifa_cuotas_anfitrion($precios),
+        'propiedades_activas' => $propiedadesActivas,
+        'costos_planes'       => tarifa_costos_anfitrion($propiedadesActivas),
     ]);
 }
 

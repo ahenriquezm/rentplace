@@ -69,7 +69,7 @@ $nombre_usuario = htmlspecialchars($_SESSION['nombre_usuario']);
 
   <div id="mp-vacio" class="mp-empty d-none">
     <div class="mp-empty-t">Todavía no has publicado ninguna propiedad.</div>
-    <div class="mp-empty-s">Publica tu primera propiedad: pagas 1 noche al mes, nunca un porcentaje por reserva.</div>
+    <div class="mp-empty-s">Publica tu primera propiedad: un pago fijo al año, nunca un porcentaje por reserva.</div>
     <a href="publicar_propiedad.php" class="od-btn od-btn-dark">Publicar mi primera propiedad</a>
   </div>
 

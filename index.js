@@ -129,7 +129,7 @@ $(function () {
     });
   }
 
-  /* ==================== PLANES Y ESTIMADOR ==================== */
+  /* ==================== PLANES, AHORRO Y CONTRATACIÓN ==================== */
 
   function iniciarEstimador() {
     const $seccion = $('#precios');
@@ -138,74 +138,85 @@ $(function () {
     // { planes: {basic:{nombre, precio_mensual, ubicaciones, reserva_online}, ...},
     //   meses_anual: 10, referencia: 0.155, pasarela: 0.035 }
     const tarifas = $seccion.data('tarifas');
-    const $precio = $('#est-precio');
-    const $noches = $('#est-noches');
+    const sesionActiva = String($seccion.data('sesion')) === '1';
 
+    // Mensual / anual: cambia precios de las tarjetas.
     $('input[name="facturacion"]').on('change', function () {
-      const periodo = $('input[name="facturacion"]:checked').val();
+      const periodo = periodicidad();
       $('.idx-plan-precio').each(function () {
         $(this).contents().first().replaceWith($(this).data(periodo));
       });
       $('.idx-plan-periodo').text(periodo === 'anual' ? ' / año' : ' / mes');
       $('.idx-plan-mes').each(function () { $(this).text($(this).data(periodo)); });
-      calcular();
     });
 
-    $precio.on('input', function () {
-      const valor = leerPrecio();
-      $precio.val(valor ? formatearMoneda(valor) : '');
-      calcular();
+    // Ahorro en 1 clic.
+    $('input[name="ahorro-monto"]').on('change', calcularAhorro);
+    calcularAhorro();
+
+    // Contratar -> Mercado Pago.
+    $('.idx-plan-btn').on('click', function () {
+      contratar($(this));
     });
-    $noches.on('input', calcular);
-    $('input[name="est-plan"]').on('change', calcular);
 
-    calcular();
-
-    function leerPrecio() {
-      return parseInt(($precio.val() || '').replace(/\D/g, ''), 10) || 0;
+    function periodicidad() {
+      return $('input[name="facturacion"]:checked').val() === 'anual' ? 'anual' : 'mensual';
     }
 
-    function calcular() {
-      const clave = $('input[name="est-plan"]:checked').val() || 'smart';
-      const plan = tarifas.planes[clave];
-      const anual = $('input[name="facturacion"]:checked').val() === 'anual';
-      const precio = leerPrecio();
-      const noches = parseInt($noches.val(), 10);
+    function calcularAhorro() {
+      const mensual = parseInt($('input[name="ahorro-monto"]:checked').val(), 10) || 0;
+      const anual = mensual * 12;
+      const comision = Math.round(anual * tarifas.referencia);
 
-      // Costo anual de la suscripción según la frecuencia de pago elegida.
-      const suscripcion = plan.precio_mensual * (anual ? tarifas.meses_anual : 12);
-      // En Smart/Pro el huésped paga online: el procesador de pagos cobra aparte (estimado).
-      const tasaPasarela = plan.reserva_online ? tarifas.pasarela : 0;
+      $('#ahorro-comision').text('$' + formatearMoneda(comision));
+      $('#ahorro-planes').html(Object.keys(tarifas.planes).map(function (clave) {
+        const plan = tarifas.planes[clave];
+        const costo = plan.precio_mensual * tarifas.meses_anual
+          + (plan.reserva_online ? Math.round(anual * tarifas.pasarela) : 0);
+        const ahorro = comision - costo;
+        return `
+          <div class="idx-ahorro-plan ${ahorro > 0 ? '' : 'neg'}">
+            <div class="n">${escapeHtml(plan.nombre)}</div>
+            <div class="v">${ahorro > 0 ? 'Ahorras $' + formatearMoneda(ahorro) : 'Aún no te conviene'}</div>
+            <div class="c">Pagas $${formatearMoneda(costo)} al año</div>
+          </div>`;
+      }).join(''));
+    }
 
-      const facturacion = precio * noches * 12;
-      const costoRentplace = suscripcion + Math.round(facturacion * tasaPasarela);
-      const comision = Math.round(facturacion * tarifas.referencia);
-      const ahorro = comision - costoRentplace;
-      // Noche del año desde la que Rentplace sale más barato que la comisión.
-      const ahorroPorNoche = precio * (tarifas.referencia - tasaPasarela);
-      const desde = ahorroPorNoche > 0 ? Math.floor(suscripcion / ahorroPorNoche) + 1 : null;
+    function contratar($btn) {
+      const plan = $btn.data('plan');
+      if (!sesionActiva) {
+        window.location.href = 'login.php?tab=registro&redirect=' + encodeURIComponent('index.php');
+        return;
+      }
 
-      $('#est-noches-out').text(noches + (noches === 1 ? ' noche' : ' noches'));
-      $('#est-titulo').text(`Plan ${plan.nombre}, pago ${anual ? 'anual' : 'mensual'}`);
-      $('#est-cuota').text('$' + formatearMoneda(suscripcion));
-      $('#est-periodo').text(`Facturas $${formatearMoneda(facturacion)} al año`);
-      $('#est-desde').text(desde ? `desde la noche ${formatearMoneda(desde)}` : '—');
-      $('#est-nota').text(tasaPasarela
-        ? `Incluye un costo estimado de ${formatearPorcentaje(tasaPasarela)} del procesador de pagos`
-        : 'En Basic coordinas el pago directo con el huésped: sin procesador de pagos');
-      $('#est-rp-label').text(`Rentplace ${plan.nombre}${tasaPasarela ? ' + procesador de pagos' : ''}`);
-      $('#est-rp-val').text('$' + formatearMoneda(costoRentplace));
-      $('#est-ab-val').text('$' + formatearMoneda(comision));
+      const textoOriginal = $btn.text();
+      $('.idx-plan-btn').prop('disabled', true);
+      $btn.text('Conectando con Mercado Pago...');
+      $('#contratar-msg').addClass('d-none');
 
-      const maximo = Math.max(costoRentplace, comision, 1);
-      $('#est-rp-bar').css('width', (costoRentplace / maximo * 100) + '%');
-      $('#est-ab-bar').css('width', (comision / maximo * 100) + '%');
+      $.ajax({
+        url: 'suscripcion-api.php', method: 'POST', dataType: 'json',
+        data: { action: 'crear_pago', plan: plan, periodicidad: periodicidad() }
+      }).done(function (res) {
+        if (res.success && res.data && res.data.url_pago) {
+          window.location.href = res.data.url_pago;
+          return;
+        }
+        error(res.message);
+      }).fail(function (xhr) {
+        if (xhr.status === 401) {
+          window.location.href = 'login.php?redirect=' + encodeURIComponent('index.php');
+          return;
+        }
+        error(xhr.responseJSON && xhr.responseJSON.message);
+      });
 
-      $('#est-ahorro')
-        .toggleClass('neg', ahorro <= 0)
-        .text(ahorro > 0
-          ? `Ahorras $${formatearMoneda(ahorro)} al año`
-          : 'Con tan pocas noches al año, una comisión por reserva te sale más barata');
+      function error(texto) {
+        $('.idx-plan-btn').prop('disabled', false);
+        $btn.text(textoOriginal);
+        $('#contratar-msg').removeClass('d-none').text(texto || 'No pudimos iniciar el pago. Intenta nuevamente.');
+      }
     }
   }
 

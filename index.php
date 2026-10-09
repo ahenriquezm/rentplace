@@ -132,13 +132,28 @@ $clp = function (float $valor): string { return '$' . number_format($valor, 0, '
       </div>
     </section>
 
-    <!-- PLANES Y ESTIMADOR (anfitriones) -->
-    <section class="idx-block idx-est" id="precios" data-tarifas="<?= $tarifas_json ?>">
+    <!-- PLANES, CONTRATACIÓN Y AHORRO (anfitriones) -->
+    <section class="idx-block idx-est" id="precios" data-tarifas="<?= $tarifas_json ?>" data-sesion="<?= $sesion_activa ? '1' : '0' ?>">
       <div class="idx-est-head">
         <div class="idx-est-eyebrow">Para anfitriones y administradores</div>
         <h2 class="idx-section-title">Sin comisión por reserva. Un precio fijo por ubicación.</h2>
         <p class="idx-est-lead">Cabañas, departamentos, habitaciones, campings y más. Pagas por dirección física,
           no por cantidad de unidades: un complejo con 5 cabañas y 12 sitios de camping es una sola ubicación.</p>
+      </div>
+
+      <!-- Ahorro en 1 clic -->
+      <div class="idx-ahorro">
+        <div class="idx-ahorro-pregunta">¿Cuánto arriendas al mes?</div>
+        <div class="idx-ahorro-opciones" role="radiogroup" aria-label="Arriendo mensual aproximado">
+          <?php foreach ([300000 => '$300 mil', 800000 => '$800 mil', 1500000 => '$1,5 millones', 3000000 => '$3 millones', 6000000 => '$6 millones'] as $monto => $etiqueta): ?>
+            <label><input type="radio" name="ahorro-monto" value="<?= $monto ?>" <?= $monto === 800000 ? 'checked' : '' ?>><span><?= $etiqueta ?></span></label>
+          <?php endforeach; ?>
+        </div>
+        <div class="idx-ahorro-resultado" aria-live="polite">
+          <div class="idx-ahorro-comision">Con una comisión de 15,5% pagarías <b id="ahorro-comision">$1.488.000</b> al año.</div>
+          <div class="idx-ahorro-planes" id="ahorro-planes"></div>
+          <div class="idx-ahorro-nota">Pago anual. En Smart y Pro se suma un costo estimado de 3,5% del procesador de pagos.</div>
+        </div>
       </div>
 
       <div class="idx-billing" role="radiogroup" aria-label="Frecuencia de pago">
@@ -164,12 +179,14 @@ $clp = function (float $valor): string { return '$' . number_format($valor, 0, '
                 <?php if ($f[$col]): ?><li><?= htmlspecialchars($f[0]) ?></li><?php endif; ?>
               <?php endforeach; ?>
             </ul>
+            <button type="button" class="idx-plan-btn <?= $clave === 'smart' ? 'principal' : '' ?>" data-plan="<?= $clave ?>">Contratar <?= htmlspecialchars($plan['nombre']) ?></button>
           </div>
         <?php endforeach; ?>
       </div>
+      <div id="contratar-msg" class="idx-contratar-msg d-none" role="alert"></div>
 
       <div class="idx-plan-notas">
-        Sin comisión de Rentplace por reserva. Los costos del procesador de pagos (Smart y Pro) se cobran aparte según el proveedor.<?= $nota_iva ?>
+        <span>Pago seguro con Mercado Pago. Sin comisión de Rentplace por reserva; el procesador de pagos (Smart y Pro) se cobra aparte.<?= $nota_iva ?></span>
         <a href="<?= TARIFA_CONTACTO_VENTAS ?>" class="idx-ventas">¿Más de 3 ubicaciones? Contactar a ventas →</a>
       </div>
 
@@ -186,59 +203,6 @@ $clp = function (float $valor): string { return '$' . number_format($valor, 0, '
           </table>
         </div>
       </details>
-
-      <div class="idx-est-grid">
-        <form class="idx-est-form" id="est-form" onsubmit="return false;">
-          <div class="idx-est-sub">¿Cuánto te ahorras frente a una comisión por reserva?</div>
-          <div class="idx-est-field">
-            <span class="idx-est-label" id="est-plan-label">Plan</span>
-            <div class="idx-est-planes" role="radiogroup" aria-labelledby="est-plan-label">
-              <?php foreach (TARIFA_PLANES as $clave => $plan): ?>
-                <label><input type="radio" name="est-plan" value="<?= $clave ?>" <?= $clave === 'smart' ? 'checked' : '' ?>> <?= htmlspecialchars($plan['nombre']) ?></label>
-              <?php endforeach; ?>
-            </div>
-          </div>
-          <div class="idx-est-field">
-            <label for="est-precio" class="idx-est-label">Precio promedio por noche</label>
-            <div class="idx-est-money">
-              <span>$</span>
-              <input type="text" id="est-precio" inputmode="numeric" value="50.000" autocomplete="off">
-            </div>
-          </div>
-          <div class="idx-est-field">
-            <label for="est-noches" class="idx-est-label">
-              Noches arrendadas al mes (todas tus unidades) <output id="est-noches-out" for="est-noches">10 noches</output>
-            </label>
-            <input type="range" id="est-noches" min="1" max="120" value="10">
-            <div class="idx-est-scale"><span>1</span><span>60</span><span>120</span></div>
-          </div>
-        </form>
-
-        <div class="idx-est-result" aria-live="polite">
-          <div class="idx-est-label" id="est-titulo">Plan Smart, pago anual</div>
-          <div class="idx-est-cuota"><span id="est-cuota">$249.900</span><small>/ año</small></div>
-          <div class="idx-est-periodo" id="est-periodo">Facturas $6.000.000 al año</div>
-
-          <div class="idx-est-pct">
-            <div>Más barato que una comisión de 15,5% <span id="est-desde">desde la noche 42</span> del año</div>
-            <div class="idx-est-muted" id="est-nota">Incluye un costo estimado de 3,5% del procesador de pagos</div>
-          </div>
-
-          <div class="idx-est-bars">
-            <div class="idx-est-bar">
-              <div class="idx-est-bar-top"><span id="est-rp-label">Rentplace Smart + procesador de pagos</span><b id="est-rp-val">$459.900</b></div>
-              <div class="idx-est-track"><div class="idx-est-fill rp" id="est-rp-bar"></div></div>
-            </div>
-            <div class="idx-est-bar">
-              <div class="idx-est-bar-top"><span>Comisión de 15,5%</span><b id="est-ab-val">$930.000</b></div>
-              <div class="idx-est-track"><div class="idx-est-fill ab" id="est-ab-bar"></div></div>
-            </div>
-          </div>
-
-          <div class="idx-est-ahorro" id="est-ahorro">Ahorras $470.100 al año</div>
-          <a href="publicar_propiedad.php" class="idx-btn-gold">Publicar mi alojamiento</a>
-        </div>
-      </div>
     </section>
 
     <!-- ANFITRIONES -->

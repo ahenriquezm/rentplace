@@ -68,6 +68,12 @@ PHP 8 procedimental, MySQL con mysqli, HTML5 + Bootstrap + JS + jQuery, AJAX/JSO
 - [x] Esquema de base de datos (`sql/01_esquema_etapa1.sql`), catálogo inicial (`sql/02_catalogo_inicial.sql`)
       y migración de los datos actuales (`sql/03_migracion_desde_propiedades.sql`), probados en MariaDB.
 
+- [x] Ahorro en 1 clic ("¿Cuánto arriendas al mes?") con el ahorro de cada plan.
+- [x] Botones "Contratar" por plan con pago en Mercado Pago (Checkout Pro), modo prueba/producción
+      configurable en `config.php` (`MP_MODO`), webhook con firma, activación idempotente de la
+      suscripción y validación de monto. Guía: `GUIA_MERCADOPAGO.md`.
+      Limitación: cada pago cubre 1 mes o 12 meses; no hay cobro recurrente automático.
+
 **Por hacer (reescritura de módulos sobre el modelo nuevo)**
 - [ ] Panel del anfitrión: datos del anfitrión, ubicaciones (con límite según plan) y unidades.
 - [ ] Formulario de unidad con atributos dinámicos según el tipo (obligatorios/opcionales).
@@ -144,7 +150,8 @@ Supuesto: precios por propiedad, con IVA incluido (pendiente de confirmar).
 ## Pendiente del dueño
 - [ ] Cambiar la contraseña de la base de datos y crear `config.php` en el servidor.
 - [ ] Cambiar la clave de vista previa (`PREVIEW_TOKEN` en `control_lanzamiento.php`).
-- [ ] Respaldar la base y ejecutar `sql/01`, `sql/02` y `sql/03` en phpMyAdmin (en ese orden).
+- [ ] Respaldar la base y ejecutar `sql/01`, `sql/02` y `sql/04` en phpMyAdmin (`sql/03` junto con la Etapa 1).
+- [ ] Configurar Mercado Pago siguiendo `GUIA_MERCADOPAGO.md`.
 - [ ] Definir si los precios incluyen IVA.
 - [ ] Elegir proveedor de pagos (Etapa 2) y política de anticipo/cancelación.
 

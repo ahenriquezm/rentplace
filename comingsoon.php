@@ -7,6 +7,7 @@
  * Requiere:
  *   - conexion.php (usado por comingsoon-api.php, no directamente aquí)
  */
+require_once __DIR__ . '/assets.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -17,7 +18,7 @@
 <meta name="description" content="Rentplace: reserva cabañas, departamentos y casas para tu descanso, sin comisiones ocultas. Sé el primero en enterarte cuando lancemos.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="comingsoon.css">
+<link rel="stylesheet" href="<?= asset('comingsoon.css') ?>">
 </head>
 <body>
 
@@ -102,6 +103,6 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="comingsoon.js"></script>
+<script src="<?= asset('comingsoon.js') ?>"></script>
 </body>
 </html>

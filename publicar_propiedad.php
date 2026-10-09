@@ -8,6 +8,7 @@
  *   - conexion.php -> usado por publicar_propiedad-api.php
  *   - Sesión activa (si no hay, redirige a login con retorno a esta página)
  */
+require_once __DIR__ . '/assets.php';
 require_once __DIR__ . '/control_lanzamiento.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -29,7 +30,7 @@ $nombre_usuario = htmlspecialchars($_SESSION['nombre_usuario']);
 <title>Publica tu propiedad — Rentplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="publicar_propiedad.css">
+<link rel="stylesheet" href="<?= asset('publicar_propiedad.css') ?>">
 </head>
 <body>
 
@@ -169,6 +170,6 @@ $nombre_usuario = htmlspecialchars($_SESSION['nombre_usuario']);
 </main>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="publicar_propiedad.js"></script>
+<script src="<?= asset('publicar_propiedad.js') ?>"></script>
 </body>
 </html>

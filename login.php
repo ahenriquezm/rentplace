@@ -10,6 +10,7 @@
  * Parámetro GET opcional:
  *   redirect -> URL a la que volver después de iniciar sesión (ej. desde ficha_propiedad.php)
  */
+require_once __DIR__ . '/assets.php';
 require_once __DIR__ . '/control_lanzamiento.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -37,7 +38,7 @@ if (!preg_match('/^[a-z0-9_\-]+\.php(\?[^\s<>"\'#]*)?$/i', $redirect)) {
 <title>Ingresar — Rentplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="<?= asset('login.css') ?>">
 </head>
 <body>
 
@@ -108,6 +109,6 @@ if (!preg_match('/^[a-z0-9_\-]+\.php(\?[^\s<>"\'#]*)?$/i', $redirect)) {
 </main>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="login.js"></script>
+<script src="<?= asset('login.js') ?>"></script>
 </body>
 </html>

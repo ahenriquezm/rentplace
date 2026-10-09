@@ -12,6 +12,7 @@
  * Ajusta las rutas de include según la ubicación real de este archivo
  * dentro de tu estructura de carpetas (ej. /modules/ficha_propiedad/).
  */
+require_once __DIR__ . '/assets.php';
 require_once __DIR__ . '/control_lanzamiento.php'; // respeta el modo coming soon e inicia la sesión
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -36,7 +37,7 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
 <title>Detalle de propiedad — Rentplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ficha_propiedad.css">
+<link rel="stylesheet" href="<?= asset('ficha_propiedad.css') ?>">
 </head>
 <body>
 
@@ -143,6 +144,6 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="ficha_propiedad.js"></script>
+<script src="<?= asset('ficha_propiedad.js') ?>"></script>
 </body>
 </html>

@@ -6,6 +6,16 @@
  */
 $(function () {
 
+  // Marca con .is-checked la etiqueta de cada radio/checkbox seleccionado.
+  // Respaldo para navegadores sin soporte de :has() en CSS.
+  function sincronizarSeleccion() {
+    $('label').has('input[type="radio"], input[type="checkbox"]').each(function () {
+      $(this).toggleClass('is-checked', $(this).find('input').prop('checked'));
+    });
+  }
+  $(document).on('change', 'input[type="radio"], input[type="checkbox"]', sincronizarSeleccion);
+  sincronizarSeleccion();
+
   const API = 'index-api.php';
 
   const CATEGORIAS = {

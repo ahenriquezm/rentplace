@@ -43,6 +43,7 @@ body{
 /* Galería */
 .od-gallery{ display:grid; grid-template-columns:1.4fr 1fr; gap:8px; border-radius:24px; overflow:hidden; height:410px; }
 .od-gallery.od-gallery-single{ grid-template-columns:1fr; }
+.od-gallery-main{ height:100%; min-height:0; overflow:hidden; }
 .od-gallery-side{ display:grid; grid-template-rows:1fr 1fr; gap:8px; }
 .od-gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
 .od-skeleton{ width:100%; height:100%; background:linear-gradient(90deg,#F0EEE9 25%,#F7F6F3 37%,#F0EEE9 63%); background-size:400% 100%; animation:od-shimmer 1.4s ease infinite; border-radius:14px; }

@@ -8,6 +8,7 @@
  *   - conexion.php -> usado por mis_propiedades-api.php
  *   - Sesión activa
  */
+require_once __DIR__ . '/assets.php';
 require_once __DIR__ . '/control_lanzamiento.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -29,7 +30,7 @@ $nombre_usuario = htmlspecialchars($_SESSION['nombre_usuario']);
 <title>Mis propiedades — Rentplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="mis_propiedades.css">
+<link rel="stylesheet" href="<?= asset('mis_propiedades.css') ?>">
 </head>
 <body>
 
@@ -87,6 +88,6 @@ $nombre_usuario = htmlspecialchars($_SESSION['nombre_usuario']);
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="mis_propiedades.js"></script>
+<script src="<?= asset('mis_propiedades.js') ?>"></script>
 </body>
 </html>

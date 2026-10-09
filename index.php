@@ -8,6 +8,7 @@
  *   - Sesión ya iniciada por el módulo de login.
  *     Variables esperadas: $_SESSION['estado_sesion'], $_SESSION['nombre_usuario']
  */
+require_once __DIR__ . '/assets.php';
 require_once __DIR__ . '/control_lanzamiento.php'; // mientras MODO_COMINGSOON=true, redirige a comingsoon.php
 require_once __DIR__ . '/tarifas.php';
 
@@ -36,7 +37,7 @@ $clp = function (float $valor): string { return '$' . number_format($valor, 0, '
 <title>Rentplace — Reserva tu próxima escapada</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="<?= asset('index.css') ?>">
 </head>
 <body>
 
@@ -287,6 +288,6 @@ $clp = function (float $valor): string { return '$' . number_format($valor, 0, '
 </main>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="index.js"></script>
+<script src="<?= asset('index.js') ?>"></script>
 </body>
 </html>

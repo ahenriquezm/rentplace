@@ -10,6 +10,7 @@
  * Parámetros GET soportados (todos opcionales):
  *   destino, llegada, salida, huespedes, tipo
  */
+require_once __DIR__ . '/assets.php';
 require_once __DIR__ . '/control_lanzamiento.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -33,7 +34,7 @@ $tipo      = $_GET['tipo'] ?? '';
 <title>Rentplace — Buscar alojamiento</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="buscar.css">
+<link rel="stylesheet" href="<?= asset('buscar.css') ?>">
 </head>
 <body>
 
@@ -110,6 +111,6 @@ $tipo      = $_GET['tipo'] ?? '';
 </main>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="buscar.js"></script>
+<script src="<?= asset('buscar.js') ?>"></script>
 </body>
 </html>

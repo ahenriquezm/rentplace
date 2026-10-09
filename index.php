@@ -20,9 +20,13 @@ $nombre_usuario = $sesion_activa ? htmlspecialchars($_SESSION['nombre_usuario'])
 
 // El estimador (index.js) usa exactamente los mismos planes que cobra el sistema.
 $tarifas_json = htmlspecialchars(json_encode([
-    'planes'     => TARIFA_PLANES,
-    'referencia' => TARIFA_REFERENCIA_AIRBNB,
+    'planes'      => TARIFA_PLANES,
+    'meses_anual' => TARIFA_MESES_PAGADOS_ANUAL,
+    'referencia'  => TARIFA_REFERENCIA_COMISION,
+    'pasarela'    => TARIFA_COSTO_PASARELA_ESTIMADO,
 ]), ENT_QUOTES);
+$nota_iva = TARIFA_IVA_INCLUIDO === null ? '' : (TARIFA_IVA_INCLUIDO ? ' Precios con IVA incluido.' : ' Precios + IVA.');
+$clp = function (float $valor): string { return '$' . number_format($valor, 0, ',', '.'); };
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -130,76 +134,108 @@ $tarifas_json = htmlspecialchars(json_encode([
     <!-- PLANES Y ESTIMADOR (anfitriones) -->
     <section class="idx-block idx-est" id="precios" data-tarifas="<?= $tarifas_json ?>">
       <div class="idx-est-head">
-        <div class="idx-est-eyebrow">Para anfitriones</div>
-        <h2 class="idx-section-title">Sin comisión por reserva. Un solo pago al año.</h2>
-        <p class="idx-est-lead">Elige lo que necesitas: solo mostrar tu propiedad, o también recibir y cobrar reservas.
-          Lo que arriendas es 100% tuyo.</p>
+        <div class="idx-est-eyebrow">Para anfitriones y administradores</div>
+        <h2 class="idx-section-title">Sin comisión por reserva. Un precio fijo por ubicación.</h2>
+        <p class="idx-est-lead">Cabañas, departamentos, habitaciones, campings y más. Pagas por dirección física,
+          no por cantidad de unidades: un complejo con 5 cabañas y 12 sitios de camping es una sola ubicación.</p>
+      </div>
+
+      <div class="idx-billing" role="radiogroup" aria-label="Frecuencia de pago">
+        <label><input type="radio" name="facturacion" value="mensual" checked> Mensual</label>
+        <label><input type="radio" name="facturacion" value="anual"> Anual <span>2 meses gratis</span></label>
       </div>
 
       <div class="idx-plan-grid">
         <?php foreach (TARIFA_PLANES as $clave => $plan): ?>
-          <div class="idx-plan <?= $clave === 'reservas' ? 'destacado' : '' ?>">
-            <?php if ($clave === 'reservas'): ?><div class="idx-plan-tag">Recomendado</div><?php endif; ?>
+          <div class="idx-plan <?= $clave === 'smart' ? 'destacado' : '' ?>">
+            <?php if ($clave === 'smart'): ?><div class="idx-plan-tag">Recomendado</div><?php endif; ?>
             <div class="idx-plan-nombre"><?= htmlspecialchars($plan['nombre']) ?></div>
-            <?php if ($plan['precio_anual'] !== null): ?>
-              <div class="idx-plan-precio">$<?= number_format($plan['precio_anual'], 0, ',', '.') ?><small> / año</small></div>
-              <div class="idx-plan-mes">Equivale a $<?= number_format($plan['precio_anual'] / 12, 0, ',', '.') ?> al mes · por propiedad</div>
-            <?php else: ?>
-              <div class="idx-plan-precio">Próximamente</div>
-              <div class="idx-plan-mes">Te avisamos al lanzar</div>
-            <?php endif; ?>
+            <div class="idx-plan-precio"
+                 data-mensual="<?= $clp($plan['precio_mensual']) ?>"
+                 data-anual="<?= $clp(tarifa_precio_anual($clave)) ?>"><?= $clp($plan['precio_mensual']) ?><small class="idx-plan-periodo"> / mes</small></div>
+            <div class="idx-plan-mes"
+                 data-mensual="<?= $plan['ubicaciones'] === 1 ? '1 ubicación' : 'Hasta ' . $plan['ubicaciones'] . ' ubicaciones' ?> · unidades sin límite"
+                 data-anual="Equivale a <?= $clp(tarifa_precio_anual($clave) / 12) ?> al mes · <?= $plan['ubicaciones'] === 1 ? '1 ubicación' : 'hasta ' . $plan['ubicaciones'] . ' ubicaciones' ?>"><?= $plan['ubicaciones'] === 1 ? '1 ubicación' : 'Hasta ' . $plan['ubicaciones'] . ' ubicaciones' ?> · unidades sin límite</div>
+            <div class="idx-plan-resumen"><?= htmlspecialchars($plan['resumen']) ?></div>
             <ul class="idx-plan-lista">
-              <?php foreach ($plan['incluye'] as $item): ?>
-                <li><?= htmlspecialchars($item) ?></li>
+              <?php $col = array_search($clave, array_keys(TARIFA_PLANES), true) + 1; ?>
+              <?php foreach (TARIFA_FUNCIONALIDADES as $f): ?>
+                <?php if ($f[$col]): ?><li><?= htmlspecialchars($f[0]) ?></li><?php endif; ?>
               <?php endforeach; ?>
             </ul>
           </div>
         <?php endforeach; ?>
       </div>
 
+      <div class="idx-plan-notas">
+        Sin comisión de Rentplace por reserva. Los costos del procesador de pagos (Smart y Pro) se cobran aparte según el proveedor.<?= $nota_iva ?>
+        <a href="<?= TARIFA_CONTACTO_VENTAS ?>" class="idx-ventas">¿Más de 3 ubicaciones? Contactar a ventas →</a>
+      </div>
+
+      <details class="idx-compara">
+        <summary>Comparar todas las funcionalidades</summary>
+        <div class="idx-compara-scroll">
+          <table>
+            <thead><tr><th></th><?php foreach (TARIFA_PLANES as $plan): ?><th><?= htmlspecialchars($plan['nombre']) ?></th><?php endforeach; ?></tr></thead>
+            <tbody>
+              <?php foreach (TARIFA_FUNCIONALIDADES as $f): ?>
+                <tr><td><?= htmlspecialchars($f[0]) ?></td><td><?= $f[1] ? '✓' : '—' ?></td><td><?= $f[2] ? '✓' : '—' ?></td><td><?= $f[3] ? '✓' : '—' ?></td></tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
       <div class="idx-est-grid">
         <form class="idx-est-form" id="est-form" onsubmit="return false;">
-          <div class="idx-est-sub">¿Cuánto te ahorras frente a una comisión?</div>
+          <div class="idx-est-sub">¿Cuánto te ahorras frente a una comisión por reserva?</div>
           <div class="idx-est-field">
-            <label for="est-precio" class="idx-est-label">Precio por noche de tu propiedad</label>
+            <span class="idx-est-label" id="est-plan-label">Plan</span>
+            <div class="idx-est-planes" role="radiogroup" aria-labelledby="est-plan-label">
+              <?php foreach (TARIFA_PLANES as $clave => $plan): ?>
+                <label><input type="radio" name="est-plan" value="<?= $clave ?>" <?= $clave === 'smart' ? 'checked' : '' ?>> <?= htmlspecialchars($plan['nombre']) ?></label>
+              <?php endforeach; ?>
+            </div>
+          </div>
+          <div class="idx-est-field">
+            <label for="est-precio" class="idx-est-label">Precio promedio por noche</label>
             <div class="idx-est-money">
               <span>$</span>
               <input type="text" id="est-precio" inputmode="numeric" value="50.000" autocomplete="off">
             </div>
           </div>
-
           <div class="idx-est-field">
             <label for="est-noches" class="idx-est-label">
-              Noches que arriendas al mes <output id="est-noches-out" for="est-noches">10 noches</output>
+              Noches arrendadas al mes (todas tus unidades) <output id="est-noches-out" for="est-noches">10 noches</output>
             </label>
-            <input type="range" id="est-noches" min="1" max="30" value="10">
-            <div class="idx-est-scale"><span>1</span><span>15</span><span>30</span></div>
+            <input type="range" id="est-noches" min="1" max="120" value="10">
+            <div class="idx-est-scale"><span>1</span><span>60</span><span>120</span></div>
           </div>
         </form>
 
         <div class="idx-est-result" aria-live="polite">
-          <div class="idx-est-label">Con el plan Reservas</div>
-          <div class="idx-est-cuota"><span id="est-cuota">$99.990</span><small>/ año</small></div>
+          <div class="idx-est-label" id="est-titulo">Plan Smart, pago anual</div>
+          <div class="idx-est-cuota"><span id="est-cuota">$249.900</span><small>/ año</small></div>
           <div class="idx-est-periodo" id="est-periodo">Facturas $6.000.000 al año</div>
 
           <div class="idx-est-pct">
-            <div><span id="est-pct">1,7%</span> de lo que facturas</div>
-            <div class="idx-est-muted" id="est-equilibrio">Se paga solo con 13 noches arrendadas al año</div>
+            <div>Más barato que una comisión de 15,5% <span id="est-desde">desde la noche 42</span> del año</div>
+            <div class="idx-est-muted" id="est-nota">Incluye un costo estimado de 3,5% del procesador de pagos</div>
           </div>
 
           <div class="idx-est-bars">
             <div class="idx-est-bar">
-              <div class="idx-est-bar-top"><span>Rentplace Reservas</span><b id="est-rp-val">$99.990</b></div>
+              <div class="idx-est-bar-top"><span id="est-rp-label">Rentplace Smart + procesador de pagos</span><b id="est-rp-val">$459.900</b></div>
               <div class="idx-est-track"><div class="idx-est-fill rp" id="est-rp-bar"></div></div>
             </div>
             <div class="idx-est-bar">
-              <div class="idx-est-bar-top"><span>Comisión típica de 15,5%</span><b id="est-ab-val">$930.000</b></div>
+              <div class="idx-est-bar-top"><span>Comisión de 15,5%</span><b id="est-ab-val">$930.000</b></div>
               <div class="idx-est-track"><div class="idx-est-fill ab" id="est-ab-bar"></div></div>
             </div>
           </div>
 
-          <div class="idx-est-ahorro" id="est-ahorro">Ahorras $830.010 al año</div>
-          <a href="publicar_propiedad.php" class="idx-btn-gold">Publicar mi propiedad</a>
+          <div class="idx-est-ahorro" id="est-ahorro">Ahorras $470.100 al año</div>
+          <a href="publicar_propiedad.php" class="idx-btn-gold">Publicar mi alojamiento</a>
         </div>
       </div>
     </section>
@@ -208,7 +244,7 @@ $tarifas_json = htmlspecialchars(json_encode([
     <section class="idx-host">
       <div>
         <h2 class="idx-host-title">¿Tienes una propiedad?<br>Publícala en Rentplace.</h2>
-        <p class="idx-host-sub">Llega a viajeros que buscan cabañas, deptos y casas para descansar. Un pago fijo al año, sin comisión: cada reserva es 100% tuya.</p>
+        <p class="idx-host-sub">Llega a viajeros que buscan cabañas, deptos y casas para descansar. Un precio fijo por ubicación, sin comisión: cada reserva es 100% tuya.</p>
         <a href="publicar_propiedad.php" class="idx-btn-gold">Publica tu propiedad</a>
       </div>
       <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600" alt="Anfitrión entregando llaves">

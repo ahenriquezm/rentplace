@@ -119,16 +119,27 @@ $(function () {
     });
   }
 
-  /* ==================== ESTIMADOR (plan Reservas vs. comisión) ==================== */
+  /* ==================== PLANES Y ESTIMADOR ==================== */
 
   function iniciarEstimador() {
     const $seccion = $('#precios');
     if ($seccion.length === 0) return;
 
-    const tarifas = $seccion.data('tarifas'); // { planes: {vitrina:{precio_anual,...},...}, referencia: 0.155 }
-    const plan = tarifas.planes.reservas;
+    // { planes: {basic:{nombre, precio_mensual, ubicaciones, reserva_online}, ...},
+    //   meses_anual: 10, referencia: 0.155, pasarela: 0.035 }
+    const tarifas = $seccion.data('tarifas');
     const $precio = $('#est-precio');
     const $noches = $('#est-noches');
+
+    $('input[name="facturacion"]').on('change', function () {
+      const periodo = $('input[name="facturacion"]:checked').val();
+      $('.idx-plan-precio').each(function () {
+        $(this).contents().first().replaceWith($(this).data(periodo));
+      });
+      $('.idx-plan-periodo').text(periodo === 'anual' ? ' / año' : ' / mes');
+      $('.idx-plan-mes').each(function () { $(this).text($(this).data(periodo)); });
+      calcular();
+    });
 
     $precio.on('input', function () {
       const valor = leerPrecio();
@@ -136,6 +147,7 @@ $(function () {
       calcular();
     });
     $noches.on('input', calcular);
+    $('input[name="est-plan"]').on('change', calcular);
 
     calcular();
 
@@ -144,29 +156,40 @@ $(function () {
     }
 
     function calcular() {
+      const clave = $('input[name="est-plan"]:checked').val() || 'smart';
+      const plan = tarifas.planes[clave];
+      const anual = $('input[name="facturacion"]:checked').val() === 'anual';
       const precio = leerPrecio();
       const noches = parseInt($noches.val(), 10);
-      const costoPlan = plan.precio_anual;
 
-      const facturacionAnual = precio * noches * 12;
-      const comisionAnual = Math.round(facturacionAnual * tarifas.referencia);
-      const pct = facturacionAnual > 0 ? costoPlan / facturacionAnual : 0;
-      const ahorro = comisionAnual - costoPlan;
-      const nochesEquilibrio = precio > 0 ? Math.ceil(costoPlan / (precio * tarifas.referencia)) : 0;
+      // Costo anual de la suscripción según la frecuencia de pago elegida.
+      const suscripcion = plan.precio_mensual * (anual ? tarifas.meses_anual : 12);
+      // En Smart/Pro el huésped paga online: el procesador de pagos cobra aparte (estimado).
+      const tasaPasarela = plan.reserva_online ? tarifas.pasarela : 0;
+
+      const facturacion = precio * noches * 12;
+      const costoRentplace = suscripcion + Math.round(facturacion * tasaPasarela);
+      const comision = Math.round(facturacion * tarifas.referencia);
+      const ahorro = comision - costoRentplace;
+      // Noche del año desde la que Rentplace sale más barato que la comisión.
+      const ahorroPorNoche = precio * (tarifas.referencia - tasaPasarela);
+      const desde = ahorroPorNoche > 0 ? Math.floor(suscripcion / ahorroPorNoche) + 1 : null;
 
       $('#est-noches-out').text(noches + (noches === 1 ? ' noche' : ' noches'));
-      $('#est-cuota').text('$' + formatearMoneda(costoPlan));
-      $('#est-periodo').text(`Facturas $${formatearMoneda(facturacionAnual)} al año`);
-      $('#est-pct').text(formatearPorcentaje(pct));
-      $('#est-equilibrio').text(nochesEquilibrio
-        ? `Se paga solo con ${nochesEquilibrio} noche${nochesEquilibrio === 1 ? '' : 's'} arrendada${nochesEquilibrio === 1 ? '' : 's'} al año`
-        : '');
-      $('#est-rp-val').text('$' + formatearMoneda(costoPlan));
-      $('#est-ab-val').text('$' + formatearMoneda(comisionAnual));
+      $('#est-titulo').text(`Plan ${plan.nombre}, pago ${anual ? 'anual' : 'mensual'}`);
+      $('#est-cuota').text('$' + formatearMoneda(suscripcion));
+      $('#est-periodo').text(`Facturas $${formatearMoneda(facturacion)} al año`);
+      $('#est-desde').text(desde ? `desde la noche ${formatearMoneda(desde)}` : '—');
+      $('#est-nota').text(tasaPasarela
+        ? `Incluye un costo estimado de ${formatearPorcentaje(tasaPasarela)} del procesador de pagos`
+        : 'En Basic coordinas el pago directo con el huésped: sin procesador de pagos');
+      $('#est-rp-label').text(`Rentplace ${plan.nombre}${tasaPasarela ? ' + procesador de pagos' : ''}`);
+      $('#est-rp-val').text('$' + formatearMoneda(costoRentplace));
+      $('#est-ab-val').text('$' + formatearMoneda(comision));
 
-      const maximo = Math.max(costoPlan, comisionAnual, 1);
-      $('#est-rp-bar').css('width', (costoPlan / maximo * 100) + '%');
-      $('#est-ab-bar').css('width', (comisionAnual / maximo * 100) + '%');
+      const maximo = Math.max(costoRentplace, comision, 1);
+      $('#est-rp-bar').css('width', (costoRentplace / maximo * 100) + '%');
+      $('#est-ab-bar').css('width', (comision / maximo * 100) + '%');
 
       $('#est-ahorro')
         .toggleClass('neg', ahorro <= 0)

@@ -21,21 +21,20 @@ $(function () {
         <div class="mp-kpi"><div class="mp-kpi-valor">${d.total_propiedades}</div><div class="mp-kpi-label">Propiedades publicadas</div></div>
         <div class="mp-kpi"><div class="mp-kpi-valor">${d.reservas_activas}</div><div class="mp-kpi-label">Reservas próximas</div></div>
         <div class="mp-kpi"><div class="mp-kpi-valor">$${formatearMoneda(d.ingresos_confirmados)}</div><div class="mp-kpi-label">Ingresos confirmados</div></div>
-        ${tarifaHtml(d.costos_planes, d.propiedades_activas)}
+        ${tarifaHtml(d.planes)}
       `);
     });
   }
 
-  function tarifaHtml(costos, propiedades) {
-    if (!costos || !propiedades) return '';
-    const valor = function (c) { return c === null ? 'Próximamente' : `<b>$${formatearMoneda(c)}</b>/año`; };
+  function tarifaHtml(planes) {
+    if (!planes || !planes.length) return '';
     return `
       <div class="mp-kpi mp-kpi-tarifa">
-        <div class="mp-kpi-label">Planes Rentplace para tus ${propiedades} propiedad${propiedades === 1 ? '' : 'es'} activa${propiedades === 1 ? '' : 's'} · sin comisión por reserva</div>
+        <div class="mp-kpi-label">Planes Rentplace · precio fijo por ubicación, unidades sin límite, sin comisión por reserva</div>
         <div class="mp-tarifa-planes">
-          <div>${valor(costos.vitrina)} · Vitrina</div>
-          <div>${valor(costos.reservas)} · Reservas</div>
-          <div>${valor(costos.pro)} · Pro (pago online)</div>
+          ${planes.map(function (p) {
+            return `<div><b>$${formatearMoneda(p.precio_mensual)}</b>/mes · ${escapeHtml(p.nombre)} (${p.ubicaciones === 1 ? '1 ubicación' : 'hasta ' + p.ubicaciones + ' ubicaciones'}) · anual $${formatearMoneda(p.precio_anual)}</div>`;
+          }).join('')}
         </div>
       </div>
     `;

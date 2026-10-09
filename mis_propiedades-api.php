@@ -96,7 +96,14 @@ function accion_resumen(mysqli $conexion): void
         'ingresos_confirmados'=> $ingresos,
         'ingresos_mes'        => $ingresosMes,
         'propiedades_activas' => $propiedadesActivas,
-        'costos_planes'       => tarifa_costos_anfitrion($propiedadesActivas),
+        'planes'              => array_map(function ($clave) {
+            return [
+                'nombre'         => TARIFA_PLANES[$clave]['nombre'],
+                'precio_mensual' => TARIFA_PLANES[$clave]['precio_mensual'],
+                'precio_anual'   => tarifa_precio_anual($clave),
+                'ubicaciones'    => TARIFA_PLANES[$clave]['ubicaciones'],
+            ];
+        }, array_keys(TARIFA_PLANES)),
     ]);
 }
 
